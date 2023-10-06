@@ -9,6 +9,13 @@ house that has suitable audio reflection from the walls/ceilings so that my
 audience can hear my singing.
 
 
+
+
+
+
+
+
+
 Exception: Venue becomes unavailable.
 
 If the venue becomes unavailable after already being booked by a performer,
@@ -35,3 +42,31 @@ Exception: Consumer of application doesn't have stable internet to access page.
 
 If the consumer who is using our application can't access the webpage, they will
 be informed of such in a 404 status code webpage error.
+
+Exception: Performers tries to book overlapping time slots 
+
+If the performer books a venue, they will not be allowed to book another on the same time slot without cancelling the first
+
+Exception: A performer tries to cancel last minute:
+
+Performers will not be able to cancel within an hour prior to the event.
+
+Exception: Performer set length is longer than what the venue has available
+
+We will cancel the transaction
+
+Exception: A venue changes location after a booking
+
+Database will be updated to account for it
+
+Exception: A performer applies for a venue that does not fit their important specifications (experience, genre, etc)
+
+Backend will deny the application before it reaches the venue
+
+Exeption: Performer changes price after a booking
+
+Database will be updated to account for it and seperate transaction process will occur
+
+Exception: Venue changes price after a booking
+
+Database will be updated to account for it and seperate transaction process will occur
