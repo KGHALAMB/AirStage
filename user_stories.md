@@ -2,19 +2,27 @@ As a hip-hop artist, I want to book a large venue that has the capacity for my
 fans and that I can book long enough so that I can perform my newest album.
 
 As a rock band, I want to book a venue that has has a large enough stage for all
-of our band members.
+of our band members so that we can perform the way we want to.
 
 As an opera singer, I want to book an indoor venue such as a theater or opera
 house that has suitable audio reflection from the walls/ceilings so that my
 audience can hear my singing.
 
+As a venue manager, I want to be able to add my venue to the system so that it can
+be booked by a performer.
 
+As a clown, I want to be able to book a venue that accomodates my genre of 
+performance so that I can find where my services are wanted quickly and efficiently.
 
+As an up-and-coming ukelele artist, I want to be able to book a venue that is 
+within my $ budget so that I don't need to worry about negotiating prices with venues 
+myself.
 
+As a concert hall manager, I want to be able to book a singer whose performance is of a
+specific duration so that we can manage our schedule around them.
 
-
-
-
+As an amphitheater manager, I want to be able to book a performer at a specific time so 
+that it fits within our busy schedule.
 
 Exception: Venue becomes unavailable.
 
