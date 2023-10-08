@@ -43,7 +43,7 @@ Exceptions
 
 1. Exception: Venue becomes unavailable while trying to book.
 
-If the venue becomes unavailable after already being booked by a performer,
+If the venue becomes unavailable after already being booked by another performer,
 the event will be cancelled and the performer will be informed.
 
 2. Exception: Performer becomes unavailable while trying to book.
