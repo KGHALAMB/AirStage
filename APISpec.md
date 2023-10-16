@@ -73,3 +73,6 @@ API Specification
         {
             "success": "boolean"
         }
+3. Modify Booking
+
+   3.1 Edit
