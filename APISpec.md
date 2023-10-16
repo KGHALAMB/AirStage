@@ -21,10 +21,11 @@ API Specification
     
     1.2 Book Venue - /book/ (POST)
     
-        Edits an existing booking of a performer
+        Creates a booking for a performer at a given venue
         
         Request:
         {
+            "user_id": "integer", /* Between 1 and 10,000 */,
             "venue_id": "integer",
             "time_start": "timestamp", /* With timezone */
             "time_end": "timestamp" /* With timezone */
@@ -35,7 +36,7 @@ API Specification
             "success": "boolean"
         }
 
-2. Cancel Booking
+3. Cancel Booking
 
     2.1 Get Bookings - /bookings/ (GET)
     
@@ -74,11 +75,11 @@ API Specification
             "success": "boolean"
         }
 
-3. Modify Booking
+4. Modify Booking
 
    3.1 Edit Booking - /bookings/ (POST)
 
-   Cancels a booking for a specified user.
+   Alters a booking for a specified user.
         
         Request:
         {
