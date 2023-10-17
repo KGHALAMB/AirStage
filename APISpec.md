@@ -8,7 +8,7 @@ The API calls are made in this sequence when a performer wants to book a venue t
 
     1.1 Get Open Venues - /venues/ (GET)
     
-        Retrieves all available venues that can be booked.
+    Retrieves all available venues that can be booked.
         
         Returns:
         [
@@ -25,7 +25,7 @@ The API calls are made in this sequence when a performer wants to book a venue t
 
    1.2 Create Booking (Performer-side) - /book/create/request_venue/{performer_id} (POST)
     
-        Creates a booking for a performer when they want a venue to perform at.
+   Creates a booking for a performer when they want a venue to perform at.
         
         Request:
         {
@@ -47,7 +47,7 @@ The API calls are made in this sequence when a venue wants to book a performer t
 
    2.1 Get Open Performers - /performers/ (GET)
     
-        Retrieves all available performers that can be booked.
+   Retrieves all available performers that can be booked.
         
         Returns:
         [
@@ -63,7 +63,7 @@ The API calls are made in this sequence when a venue wants to book a performer t
 
    2.2 Create Venue - /venues/create (POST)
     
-        Creates a venue 
+   Creates a venue 
         
         Request:
         {
@@ -82,7 +82,7 @@ The API calls are made in this sequence when a venue wants to book a performer t
 
    2.3 Create Booking (Venue-side) - /book/create/request_performer/{venue_id} (POST)
     
-        Creates a booking for a venue when they want a performer to perform at their venue.
+   Creates a booking for a venue when they want a performer to perform at their venue.
         
         Request:
         {
@@ -107,7 +107,7 @@ The API calls are made in this sequence when a booking is to be altered
 
    3.1 Edit Booking - /book/edit/{booking_id} (POST)
 
-        Edits a booking given its id.
+   Edits a booking given its id.
         
         Request:
         {
@@ -124,7 +124,7 @@ The API calls are made in this sequence when a booking is to be altered
 
    3.2 Cancel Booking - /book/cancel/{booking_id} (POST)
     
-        Cancels a booking given its id.
+   Cancels a booking given its id.
             
         Returns:
         {
@@ -139,7 +139,7 @@ These are the APIs available to modify a venue.
     
     4.1 Modify Venue - /venues/edit/{venue_id} (POST)
     
-        Modifies a given venue
+    Modifies a given venue
         
         Request:
         {
@@ -158,7 +158,7 @@ These are the APIs available to modify a venue.
 
     4.2 Delete Venue - /venues/delete/{venue_id} (POST)
     
-        Deletes a given venue
+    Deletes a given venue
         
         Returns:
         {
@@ -173,7 +173,7 @@ The API calls are made in this sequence when a user is to sign up/login
 
     5.1 Signing up as a user - /signup/ (POST)
 
-        Adds a users credentials to the database
+    Adds a users credentials to the database
 
         Request:
         {
@@ -188,7 +188,7 @@ The API calls are made in this sequence when a user is to sign up/login
 
     5.2 Signing in as a user - /signin/ (GET)
 
-        Checks if inputted username and password is associated with an account
+    Checks if inputted username and password is associated with an account
 
         Request:
         {
@@ -209,7 +209,7 @@ These are the APIs available for testing purposes.
    
     6.1 Getting User Information - /users/{user_id} (GET)
 	
-        Returns the information that is linked to a User
+    Returns the information that is linked to a User
         
         Returns:
         {
@@ -219,7 +219,7 @@ These are the APIs available for testing purposes.
 
    6.2 Get Booking - /book/{booking_id} (GET)
 
-        Retrives the booking associated with the given booking id
+   Retrives the booking associated with the given booking id
 
    	Returns:
         {
@@ -231,7 +231,7 @@ These are the APIs available for testing purposes.
 
    6.3 Get Venue - /venues/{venue_id} (GET)
     
-        Retrives the venue associated with the given venue id
+   Retrives the venue associated with the given venue id
         
         Returns:
         
