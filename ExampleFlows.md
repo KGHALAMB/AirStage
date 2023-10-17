@@ -5,7 +5,7 @@ time he wishes to perform.
 
 Iann then initiates a booking of a venue. To do so, he:
 
-- calls POST /book/{venue_id} and passes in venue_id 5, time_start at 2023-12-20 16:00:00 -8:00,
+- calls POST /book/create/request_venue/{performer_id} and passes in venue_id 5, time_start at 2023-12-20 16:00:00 -8:00,
   and time_end at 2023-12-20 20:00:00 -8:00.
 
 Iann successfully books the venue for December 12, 2023 from 4:00 pm to 8:00 pm.
