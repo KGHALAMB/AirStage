@@ -21,3 +21,8 @@ She calls GET /signin/, which will take the username and password she entered as
 Taylor has successfully created an account and logged in.
 
 Example 3
+
+Underground drill rapper BabyShark has a fleeting feeling that there’s been a miscommunication with the venue he’s booked regarding his performance start time. First, BabyShark requests his booking by calling GET /book/get/{200} and passing in his booking_id (ex. 200). BabyShark would be able to see the listed start and end time for this booking and can check to see if he wants it any different. If he does want to change the start time (say, to 5:00 PM), he can:
+call /book/edit/{200} (passing in booking_id 200), passing in performer_id (ex. 5), venue_id (ex. 10), the new time_start at 2023-11-12 17:00:00 -5:00 and the original time_end at 2023-11-12 20:00:00 -8:00. This will return successful.
+
+BabyShark has successfully edited his booking to change the start time to 2023-11-12 17:00:00 -5:00.
