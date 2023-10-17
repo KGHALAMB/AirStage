@@ -235,7 +235,6 @@ These are the APIs available for testing purposes.
    Retrives the venue associated with the given venue id
         
         Returns:
-        
         {
             "venue_id": "integer", /* Between 1 and 10,000 */
             "name": "string",
