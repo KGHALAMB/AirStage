@@ -206,6 +206,7 @@ The API calls are made in this sequence when a user is to sign up/login
 These are the APIs available for testing purposes.
 1. `Getting User Information`
 2. `Get Booking`
+3. `Get Venue`
    
     6.1 Getting User Information - /users/{user_id} (GET)
 	
