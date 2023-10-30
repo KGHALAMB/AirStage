@@ -3,6 +3,7 @@ from re import M
 from sqlite3 import Timestamp
 from time import time
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 #from src.api import auth
 
 import sqlalchemy
@@ -14,18 +15,20 @@ router = APIRouter(
     #dependencies=[Depends(auth.get_api_key)],
 )
 
+class Venue(BaseModel):
+    venue_id: int
 
 @router.post("/create/request_venue/{performer_id}")
-def book_venue(performer_id: int, venue_id: int, time_start: Timestamp, time_end: Timestamp):
+def book_venue(performer_id: int, venue: Venue):
 
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM performers WEHRE performer_id = :a"), {"a": performer_id})
+        result = connection.execute(sqlalchemy.text("SELECT * FROM performers WHERE performer_id = :a"), {"a": performer_id})
         for row in result:
             capacity_preference = row.capacity_preference
             time_available = row.time_available
             time_end = row.time_end
 
-        result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a": venue_id})
+        result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a": venue.venue_id})
         for row in result:
             capacity = row.capacity
             price = row.price
@@ -34,8 +37,9 @@ def book_venue(performer_id: int, venue_id: int, time_start: Timestamp, time_end
 
         if capacity >= capacity_preference:
             # need to test this logic
+
             time_works = True
-            result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE venue_id = :a", {"a": venue_id}))
+            result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE venue_id = :a"), {"a": venue.venue_id})
             for row in result:
                 time_start = row.time_start
                 time_finish = row.time_end
@@ -46,7 +50,7 @@ def book_venue(performer_id: int, venue_id: int, time_start: Timestamp, time_end
             
             if time_works:
                 result = connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
-                                            {"a": performer_id, "b": venue_id, "c": time_available, "d": time_end})
+                                            {"a": performer_id, "b": venue.venue_id, "c": time_available, "d": time_end})
                 return { "success": True }
 
     return { "success": False }
