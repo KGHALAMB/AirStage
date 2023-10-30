@@ -1,41 +1,41 @@
-# Example Workflow
+## Example Workflow: Performer Booking a Venue
 
-1. Performer Booking a Venue
 The API calls are made in this sequence when a performer wants to book a venue to perform at
+1. `Get Open Venues`
+2. `Create Booking (Performer-side)`
 
-Get Open Venues
-
-Create Booking (Performer-side)
-
-1.1 Get Open Venues - /catalog/venues/ (GET)
-
-Retrieves all available venues that can be booked.
-
- Returns:
- [
-     {
-         "venue_id": "integer", /* Between 1 and 10,000 */
-         "name": "string",
-         "location": "string",
-         "capacity": "integer", /* Between 1 and 100,000 */
-         "price": "integer", /* Between 1 and 100,000 */
-         "time_available": "timestamp", /* With timezone */
-         "time_end": "timestamp" /* With timezone */
-     }
- ]    
-1.2 Create Booking (Performer-side) - /book/create/request_venue/{performer_id} (POST)
-
-Creates a booking for a performer when they want a venue to perform at.
-
- Request:
- {
-     "venue_id": "integer",
- }
- 
- Returns:
- {
-     "success": "boolean"
- }
+    1.1 Get Open Venues - /venues/ (GET)
+    
+    Retrieves all available venues that can be booked.
+        
+        Returns:
+        [
+            {
+                "venue_id": "integer", /* Between 1 and 10,000 */
+                "name": "string",
+                "location": "string",
+                "capacity": "integer", /* Between 1 and 100,000 */
+                "price": "integer", /* Between 1 and 100,000 */
+                "time_available": "timestamp", /* With timezone */
+                "time_end": "timestamp" /* With timezone */
+            }
+        ]
+   
+   1.2 Create Booking (Performer-side) - /book/create/request_venue/{performer_id} (POST)
+    
+   Creates a booking for a performer when they want a venue to perform at.
+        
+        Request:
+        {
+            "venue_id": "integer",
+            "time_start": "timestamp", /* With timezone */
+            "time_end": "timestamp" /* With timezone */
+        }
+        
+        Returns:
+        {
+            "success": "boolean"
+        } 
 
 # Testing Results
 
