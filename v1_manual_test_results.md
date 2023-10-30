@@ -23,13 +23,11 @@ The API calls are made in this sequence when a performer wants to book a venue t
    
    1.2 Create Booking (Performer-side) - /book/create/request_venue/{performer_id} (POST)
     
-   Creates a booking for a performer when they want a venue to perform at.
+   Creates a booking for a performer when they are going to perform at a venue.
         
         Request:
         {
-            "venue_id": "integer",
-            "time_start": "timestamp", /* With timezone */
-            "time_end": "timestamp" /* With timezone */
+            "venue_id": "integer"
         }
         
         Returns:
