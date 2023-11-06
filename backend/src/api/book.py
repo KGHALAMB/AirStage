@@ -72,8 +72,28 @@ def book_venue(performer_id: int, venue: Venue):
 def modify_venue(venue: Venue):
 
     with db.engine.begin() as connection:
+        venue_exists = False
+        result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :venue_id"), {"venue_id", venue.venue_id})
+        for row in result:
+            venue_exists = True
+            name = row.name
+            location = row.location
+            capacity = row.capacity
+            price = row.price
+            time_available = row.time_available
+            time_end = row.time_end
+
+        if not venue_exists:
+            return { "success": False }
+
         connection.execute(sqlalchemy.text("UPDATE venues SET name = :name, location = :location, capacity = :capacity, price = :price, time_available = :time_available, time_end = :time_end WHERE venue_id = :venue_id;"),
                             {"venue_id": venue.venue_id, "name":venue.name, "location":venue.location, "capacity":venue.capacity, "price":venue.price, "time_available":venue.time_available, "time_end":venue.time_end})
+
+    with db.engine.begin() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :venue_id"), {"venue_id", venue.venue_id})
+        for row in result:
+            if row.name == name and row.location == location and row.capacity == capacity and row.price == price and row.time_available == time_available and row.time_end == time_end:
+                return { "success": False }
 
     return { "success": True }
 
@@ -81,7 +101,17 @@ def modify_venue(venue: Venue):
 def delete_venue(venue: Venue):
 
     with db.engine.begin() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM venues"))
+        for row in result:
+            num_rows = row.num_rows
+
         connection.execute(sqlalchemy.text("DELETE FROM venues WHERE venue_id = :venue_id;"), {'venue_id':venue.venue_id})
+
+        with db.engine.begin() as connection:
+            result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM venues"))
+            for row in result:
+                if num_rows == row.num_rows:
+                    return { "success": False }
                                            
     return { "success": True }
 
@@ -89,8 +119,26 @@ def delete_venue(venue: Venue):
 def modify_booking(booking: Booking):
 
     with db.engine.begin() as connection:
+        booking_exists = False
+        result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE booking_id = :booking_id"), {"booking_id", booking.booking_id})
+        for row in result:
+            booking_exists = True
+            performer_id = row.performer_id
+            venue_id = row.venue_id
+            time_start = row.time_start
+            time_end = row.time_end
+
+        if not booking_exists:
+            return { "success": False }
+
         connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE booking_id = :booking_id;"),
                             {"performer_id": booking.performer_id, "venue_id":booking.venue_id, "time_start":booking.time_start, "time_end":booking.time_end, 'booking_id':booking.booking_id})
+
+    with db.engine.begin() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE booking_id = :booking_id"), {"booking_id", booking.booking_id})
+        for row in result:
+            if row.performer_id == performer_id and row.venue_id == venue_id and row.time_start == time_start and row.time_end == time_end:
+                return { "success": False }
 
     return { "success": True }
 
@@ -98,6 +146,17 @@ def modify_booking(booking: Booking):
 def delete_booking(booking: Booking):
 
     with db.engine.begin() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM bookings"))
+        for row in result:
+            num_rows = row.num_rows
+
         connection.execute(sqlalchemy.text("DELETE FROM bookings WHERE booking_id = :booking_id;"), {'booking_id':booking.booking_id})
                                            
+                                
+    with db.engine.begin() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM bookings"))
+        for row in result:
+            if num_rows == row.num_rows:
+                return { "success": False }
+
     return { "success": True }
