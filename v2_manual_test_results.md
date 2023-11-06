@@ -1,3 +1,67 @@
+## 2. Venue Booking a Performer
+
+The API calls are made in this sequence when a venue wants to book a performer to perform at their venue
+1. `Get Performers`
+2. `Create Booking (Venue-side)`
+
+   2.1 Get Open Performers - /catalog/performers/ (GET)
+    
+   Retrieves all available performers that can be booked.
+        
+        Returns:
+        [
+            {
+                "performer_id": "integer", /* Between 1 and 10,000 */
+                "name": "string",
+                "capacity_preference": "integer", /* Between 1 and 100,000 */
+                "price": "integer", /* Between 1 and 100,000 */
+                "time_available": "timestamp", /* With timezone */
+                "time_end": "timestamp" /* With timezone */
+            }
+        ]
+
+   2.2 Create Booking (Venue-side) - /book/create/request_performer/{venue_id} (POST)
+    
+   Creates a booking for a venue when they want a performer to perform at their venue.
+        
+        Request:
+        {
+            "performer_id": "integer",
+   	        "name": "string",
+	          "capacity_preference": "integer", /* Between 1 and 100,000 */
+            "price": "integer", /* Between 1 and 100,000 */
+            "time_start": "timestamp", /* With timezone */
+            "time_end": "timestamp" /* With timezone */
+        }
+        
+        Returns:
+        {
+            "success": "boolean"
+        } 
+
+# Testing Results
+
+1.
+curl -X 'GET' \
+  'https://airstage-api.onrender.com/catalog/performers/' \
+  -H 'accept: application/json'
+
+2.
+[
+  {
+    "performer_id": 1,
+    "name": "Iann Dior",
+    "capacity_preference": 8000,
+    "price": 13000,
+    "time_available": "2023-11-06T05:00:00+00:00",
+    "time_end": "2023-11-06T07:05:00+00:00"
+  }
+]
+
+1.
+
+
+
 ## 3. Modifying a Booking
 
 The API calls are made in this sequence when a booking is to be altered

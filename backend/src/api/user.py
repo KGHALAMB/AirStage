@@ -35,8 +35,15 @@ def signup(user: User):
                     type = 0
                 else:
                     type = 1
-                result = connection.execute(sqlalchemy.text("INSERT INTO users (user_type, username, password) VALUES (:a, :b, :c)"),
+                result = connection.execute(sqlalchemy.text("INSERT INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
                                                 {"a": type, "b": user.username, "c": user.password})
+                user_id = result.first()[0]
+                if type == 0:
+                    result = connection.execute(sqlalchemy.text("INSERT INTO performers (name, capacity_preference, price, user_id) VALUES (:a, :b, :c, :d)"),
+                                                    {"a": user.username, "b": 10000, "c": 10000, "d": user_id})
+                else:
+                    result = connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :d)"),
+                                                    {"a": user.username, "b": "San Francisco", "c": 10000, "d": 10000, "e": user_id})
                 return { "success": True }
 
     return { "success": False }
