@@ -58,9 +58,22 @@ curl -X 'GET' \
   }
 ]
 
-1.
+1. curl -X 'POST' \
+  'http://127.0.0.1:3000/book/create/request_performer/1' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "performer_id": 2,
+  "name": "Taylor Swift",
+  "capacity_preference": 100,
+  "price": 1000,
+  "time_available": "2023-11-06T05:00:00+00:00",
+  "time_end": "2023-11-06T07:05:00+00:00"
+}'
 
-
+2. {
+  "success": true
+}
 
 ## 3. Modifying a Booking
 
