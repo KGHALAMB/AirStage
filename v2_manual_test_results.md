@@ -58,7 +58,8 @@ curl -X 'GET' \
   }
 ]
 
-1. curl -X 'POST' \
+1.
+curl -X 'POST' \
   'http://127.0.0.1:3000/book/create/request_performer/1' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
@@ -71,7 +72,8 @@ curl -X 'GET' \
   "time_end": "2023-11-06T07:05:00+00:00"
 }'
 
-2. {
+3.
+{
   "success": true
 }
 
