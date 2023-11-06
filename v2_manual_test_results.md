@@ -255,6 +255,7 @@ These are the APIs available for testing purposes.
 curl -X 'GET' \
   'http://127.0.0.1:3000/catalog/user/1' \
   -H 'accept: application/json'
+   
 2.
 {
   "user_id": 1,
@@ -263,10 +264,12 @@ curl -X 'GET' \
   "password": "GamingAxel202/#$%",
   "time_sign_up": "2023-11-05T22:44:52.519186+00:00"
 }
+
 1. 
 curl -X 'GET' \
   'http://127.0.0.1:3000/catalog/booking/3' \
   -H 'accept: application/json'
+   
 2. 
 {
   "venue_id": 1,
