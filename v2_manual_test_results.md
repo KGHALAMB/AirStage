@@ -72,7 +72,7 @@ curl -X 'POST' \
   "time_end": "2023-11-06T07:05:00+00:00"
 }'
 
-3.
+2.
 {
   "success": true
 }
@@ -251,3 +251,26 @@ These are the APIs available for testing purposes.
         }
    
 # Testing Results
+1. 
+curl -X 'GET' \
+  'http://127.0.0.1:3000/catalog/user/1' \
+  -H 'accept: application/json'
+2.
+{
+  "user_id": 1,
+  "user_type": 0,
+  "username": "Arctic1ce",
+  "password": "GamingAxel202/#$%",
+  "time_sign_up": "2023-11-05T22:44:52.519186+00:00"
+}
+1. 
+curl -X 'GET' \
+  'http://127.0.0.1:3000/catalog/booking/3' \
+  -H 'accept: application/json'
+2. 
+{
+  "venue_id": 1,
+  "performer_id": 1,
+  "time_start": "2023-11-06T22:00:00+00:00",
+  "time_end": "2023-11-07T00:00:00+00:00"
+}
