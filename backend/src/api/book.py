@@ -17,6 +17,19 @@ router = APIRouter(
 
 class Venue(BaseModel):
     venue_id: int
+    name: str
+    location: str
+    capacity: int 
+    price: int
+    time_available: str
+    time_end: str 
+
+class Booking(BaseModel):
+    booking_id: int
+    venue_id: str
+    performer_id: str
+    time_start: str 
+    time_end: int
 
 @router.post("/create/request_venue/{performer_id}")
 def book_venue(performer_id: int, venue: Venue):
@@ -54,3 +67,37 @@ def book_venue(performer_id: int, venue: Venue):
                 return { "success": True }
 
     return { "success": False }
+
+@router.post("/venues/edit/{venue_id}")
+def modify_venue(venue: Venue):
+
+    with db.engine.begin() as connection:
+        connection.execute(sqlalchemy.text("UPDATE venues SET name = :name, location = :location, capacity = :capacity, price = :price, time_available = :time_available, time_end = :time_end WHERE venue_id = :venue_id;"),
+                            {"venue_id": venue.venue_id, "name":venue.name, "location":venue.location, "capacity":venue.capacity, "price":venue.price, "time_available":venue.time_available, "time_end":venue.time_end})
+
+    return { "success": True }
+
+@router.post("/venues/delete/{venue_id}")
+def delete_venue(venue: Venue):
+
+    with db.engine.begin() as connection:
+        connection.execute(sqlalchemy.text("DELETE FROM venues WHERE venue_id = :venue_id;"), {'venue_id':venue.venue_id})
+                                           
+    return { "success": True }
+
+@router.post("/book/edit/{booking_id} ")
+def modify_booking(booking: Booking):
+
+    with db.engine.begin() as connection:
+        connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE booking_id = :booking_id;"),
+                            {"performer_id": booking.performer_id, "venue_id":booking.venue_id, "time_start":booking.time_start, "time_end":booking.time_end, 'booking_id':booking.booking_id})
+
+    return { "success": True }
+
+@router.post("/book/cancel/{booking_id}")
+def delete_booking(booking: Booking):
+
+    with db.engine.begin() as connection:
+        connection.execute(sqlalchemy.text("DELETE FROM bookings WHERE booking_id = :booking_id;"), {'booking_id':booking.booking_id})
+                                           
+    return { "success": True }
