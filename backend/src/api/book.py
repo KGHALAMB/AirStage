@@ -115,7 +115,7 @@ def delete_venue(venue: Venue):
                                            
     return { "success": True }
 
-@router.post("/book/edit/{booking_id} ")
+@router.post("/bookings/edit/{booking_id} ")
 def modify_booking(booking: Booking):
 
     with db.engine.begin() as connection:
@@ -142,7 +142,7 @@ def modify_booking(booking: Booking):
 
     return { "success": True }
 
-@router.post("/book/cancel/{booking_id}")
+@router.post("/bookings/cancel/{booking_id}")
 def delete_booking(booking: Booking):
 
     with db.engine.begin() as connection:
