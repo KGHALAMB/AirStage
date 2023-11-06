@@ -24,28 +24,19 @@ class Venue(BaseModel):
     time_available: str
     time_end: str 
 
+class Performer(BaseModel):
+    performer_id: int
+    name: str
+    capacity_preference: int
+    price: int
+    time_available: str
+    time_end: str
+
 class Booking(BaseModel):
     performer_id: int
     venue_id: int
     time_start: str 
     time_end: str
-
-
-@router.get("/{booking_id}")
-def get_booking(booking_id: int):
-
-    json = {}
-    with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :a"), {"a": booking_id})
-        for row in result:
-            json = {
-                "venue_id": row.venue_id,
-                "performer_id": row.performer_id,
-                "time_start": row.time_start,
-                "time_end": row.time_end
-            }
-
-    return json
 
 
 @router.post("/create/request_venue/{performer_id}")
@@ -66,8 +57,6 @@ def book_venue(performer_id: int, venue: Venue):
             # time_finish = row.time_end
 
         if capacity >= capacity_preference:
-            # need to test this logic
-
             time_works = True
             result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE venue_id = :a"), {"a": venue.venue_id})
             for row in result:
@@ -75,7 +64,6 @@ def book_venue(performer_id: int, venue: Venue):
                 time_finish = row.time_end
 
                 if not (time_available >= time_start and time_available <= time_finish) or (time_end >= time_start and time_end <= time_finish):
-                    #return { "success": False }
                     time_works = False
             
             if time_works:
@@ -85,53 +73,38 @@ def book_venue(performer_id: int, venue: Venue):
 
     return { "success": False }
 
-@router.post("/venues/edit/{venue_id}")
-def modify_venue(venue_id: int, venue: Venue):
+@router.post("/create/request_performer/{venue_id}")
+def book_venue(venue_id: int, performer: Performer):
 
     with db.engine.begin() as connection:
-        venue_exists = False
-        result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :venue_id"), {"venue_id", venue_id})
+        result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a": venue_id})
         for row in result:
-            venue_exists = True
-            name = row.name
-            location = row.location
             capacity = row.capacity
-            price = row.price
             time_available = row.time_available
             time_end = row.time_end
 
-        if not venue_exists:
-            return { "success": False }
-
-        connection.execute(sqlalchemy.text("UPDATE venues SET name = :name, location = :location, capacity = :capacity, price = :price, time_available = :time_available, time_end = :time_end WHERE venue_id = :venue_id;"),
-                            {"venue_id": venue_id, "name": venue.name, "location": venue.location, "capacity": venue.capacity, "price": venue.price, "time_available": venue.time_available, "time_end": venue.time_end})
-        connection.commit()
-
-    with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :venue_id"), {"venue_id": venue_id})
+        result = connection.execute(sqlalchemy.text("SELECT * FROM performers WHERE performer_id = :a"), {"a": performer.performer_id})
         for row in result:
-            if row.name == name and row.location == location and row.capacity == capacity and row.price == price and row.time_available == time_available and row.time_end == time_end:
-                return { "success": False }
+            capacity_preference = row.capacity_preference
+            price = row.price
 
-    return { "success": True }
-
-@router.post("/venues/delete/{venue_id}")
-def delete_venue(venue_id: int):
-
-    with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM venues"))
-        for row in result:
-            num_rows = row.num_rows
-
-        connection.execute(sqlalchemy.text("DELETE FROM venues WHERE venue_id = :venue_id;"), {'venue_id': venue_id})
-
-        with db.engine.begin() as connection:
-            result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM venues"))
+        if capacity >= capacity_preference:
+            time_works = True
+            result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE performer_id = :a"), {"a": performer.performer_id})
             for row in result:
-                if num_rows == row.num_rows:
-                    return { "success": False }
-                                           
-    return { "success": True }
+                time_start = row.time_start
+                time_finish = row.time_end
+
+                if not (time_available >= time_start and time_available <= time_finish) or (time_end >= time_start and time_end <= time_finish):
+                    time_works = False
+            
+            if time_works:
+                result = connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
+                                            {"a": performer.performer_id, "b": venue_id, "c": time_available, "d": time_end})
+                return { "success": True }
+
+    return { "success": False }
+
 
 @router.post("/bookings/edit/{booking_id}")
 def modify_booking(booking_id: int, booking: Booking):
@@ -179,3 +152,57 @@ def delete_booking(booking_id: int):
                 return { "success": False }
 
     return { "success": True }
+
+
+
+
+
+
+
+#     @router.post("/venues/edit/{venue_id}")
+# def modify_venue(venue_id: int, venue: Venue):
+
+#     with db.engine.begin() as connection:
+#         venue_exists = False
+#         result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :venue_id"), {"venue_id", venue_id})
+#         for row in result:
+#             venue_exists = True
+#             name = row.name
+#             location = row.location
+#             capacity = row.capacity
+#             price = row.price
+#             time_available = row.time_available
+#             time_end = row.time_end
+
+#         if not venue_exists:
+#             return { "success": False }
+
+#         connection.execute(sqlalchemy.text("UPDATE venues SET name = :name, location = :location, capacity = :capacity, price = :price, time_available = :time_available, time_end = :time_end WHERE venue_id = :venue_id;"),
+#                             {"venue_id": venue_id, "name": venue.name, "location": venue.location, "capacity": venue.capacity, "price": venue.price, "time_available": venue.time_available, "time_end": venue.time_end})
+#         connection.commit()
+
+#     with db.engine.begin() as connection:
+#         result = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :venue_id"), {"venue_id": venue_id})
+#         for row in result:
+#             if row.name == name and row.location == location and row.capacity == capacity and row.price == price and row.time_available == time_available and row.time_end == time_end:
+#                 return { "success": False }
+
+#     return { "success": True }
+
+# @router.post("/venues/delete/{venue_id}")
+# def delete_venue(venue_id: int):
+
+#     with db.engine.begin() as connection:
+#         result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM venues"))
+#         for row in result:
+#             num_rows = row.num_rows
+
+#         connection.execute(sqlalchemy.text("DELETE FROM venues WHERE venue_id = :venue_id;"), {'venue_id': venue_id})
+
+#         with db.engine.begin() as connection:
+#             result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM venues"))
+#             for row in result:
+#                 if num_rows == row.num_rows:
+#                     return { "success": False }
+                                           
+#     return { "success": True }

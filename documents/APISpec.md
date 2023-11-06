@@ -6,7 +6,7 @@ The API calls are made in this sequence when a performer wants to book a venue t
 1. `Get Open Venues`
 2. `Create Booking (Performer-side)`
 
-    1.1 Get Open Venues - /venues/ (GET)
+    1.1 Get Open Venues - /catalog/venues/ (GET)
     
     Retrieves all available venues that can be booked.
         
@@ -42,10 +42,10 @@ The API calls are made in this sequence when a performer wants to book a venue t
 ## 2. Venue Booking a Performer
 
 The API calls are made in this sequence when a venue wants to book a performer to perform at their venue
-1. `Get Open Performers`
+1. `Get Performers`
 2. `Create Booking (Venue-side)`
 
-   2.1 Get Open Performers - /performers/ (GET)
+   2.1 Get Open Performers - /catalog/performers/ (GET)
     
    Retrieves all available performers that can be booked.
         
@@ -61,34 +61,15 @@ The API calls are made in this sequence when a venue wants to book a performer t
             }
         ]
 
-   2.2 Create Venue - /venues/create (POST)
-    
-   Creates a venue 
-        
-        Request:
-        {
-            "name": "string",
-            "location": "string",
-            "capacity": "integer", /* Between 1 and 100,000 */
-            "price": "integer", /* Between 1 and 100,000 */
-            "time_available": "timestamp", /* With timezone */
-            "time_end": "timestamp" /* With timezone */
-        }
-        
-        Returns:
-        {
-            "success": "boolean"
-        }
-
-   2.3 Create Booking (Venue-side) - /book/create/request_performer/{venue_id} (POST)
+   2.2 Create Booking (Venue-side) - /book/create/request_performer/{venue_id} (POST)
     
    Creates a booking for a venue when they want a performer to perform at their venue.
         
         Request:
         {
             "performer_id": "integer",
-   	    "name": "string",
-	    "capacity_preference": "integer", /* Between 1 and 100,000 */
+   	        "name": "string",
+	        "capacity_preference": "integer", /* Between 1 and 100,000 */
             "price": "integer", /* Between 1 and 100,000 */
             "time_start": "timestamp", /* With timezone */
             "time_end": "timestamp" /* With timezone */
@@ -102,10 +83,24 @@ The API calls are made in this sequence when a venue wants to book a performer t
 ## 3. Modifying a Booking
 
 The API calls are made in this sequence when a booking is to be altered
-1. `Edit Booking`
-2. `Delete Booking`
+1. `Get Booking`
+2. `Edit Booking`
 
-   3.1 Edit Booking - /book/edit/{booking_id} (POST)
+   3.1 Get Booking - /catalog/booking/{booking_id} (GET)
+
+   Retrieves the information for a bookingn given its id.
+
+        Request: N/A
+
+        Returns:
+        {
+            "venue_id": row.venue_id,
+            "performer_id": row.performer_id,
+            "time_start": row.time_start,
+            "time_end": row.time_end
+        }
+
+   3.2 Edit Booking - /book/bookings/edit/{booking_id} (POST)
 
    Edits a booking given its id.
         
@@ -122,7 +117,27 @@ The API calls are made in this sequence when a booking is to be altered
             "success": "boolean"
         }
 
-   3.2 Cancel Booking - /book/cancel/{booking_id} (POST)
+## 4. Modifying a Booking
+
+The API calls are made in this sequence when a booking is to be removed
+1. `Get Booking`
+2. `Cancel Booking`
+
+   4.1 Get Booking - /catalog/booking/{booking_id} (GET)
+
+   Retrieves the information for a bookingn given its id.
+
+        Request: N/A
+
+        Returns:
+        {
+            "venue_id": row.venue_id,
+            "performer_id": row.performer_id,
+            "time_start": row.time_start,
+            "time_end": row.time_end
+        }  
+
+   4.2 Cancel Booking - /book/bookings/cancel/{booking_id} (POST)
     
    Cancels a booking given its id.
             
@@ -131,39 +146,6 @@ The API calls are made in this sequence when a booking is to be altered
             "success": "boolean"
         }
     
-## 4. Modifying a Venue
-
-These are the APIs available to modify a venue.
-1. `Modify Venue`
-2. `Delete Venue`
-    
-    4.1 Modify Venue - /venues/edit/{venue_id} (POST)
-    
-    Modifies a given venue
-        
-        Request:
-        {
-            "name": "string",
-            "location": "string",
-            "capacity": "integer", /* Between 1 and 100,000 */
-            "price": "integer", /* Between 1 and 100,000 */
-            "time_available": "timestamp", /* With timezone */
-            "time_end": "timestamp" /* With timezone */
-        }
-        
-        Returns:
-        {
-            "success": "boolean"
-        }
-
-    4.2 Delete Venue - /venues/delete/{venue_id} (POST)
-    
-    Deletes a given venue
-        
-        Returns:
-        {
-            "success": "boolean"
-        }
 
 ## 5. User signing up/in
 
@@ -171,14 +153,15 @@ The API calls are made in this sequence when a user is to sign up/login
 1. `Signing up as a user`
 2. `Signing in as a user`
 
-    5.1 Signing up as a user - /signup/ (POST)
+    5.1 Signing up as a user - /user/signup/ (POST)
 
     Adds a users credentials to the database
 
         Request:
         {
             "username": "string",
-            "Password": “string 
+            "password": “string",
+            "user_type": "string"
         }
     
         Returns:
@@ -186,14 +169,15 @@ The API calls are made in this sequence when a user is to sign up/login
             "success": "boolean"
         }
 
-    5.2 Signing in as a user - /signin/ (GET)
+    5.2 Signing in as a user - /user/signin/ (POST)
 
     Checks if inputted username and password is associated with an account
 
         Request:
         {
             "username": "string",
-            "Password": “string 
+            "password": "string",
+            "user_type": "string"
         }
     
         Returns:
@@ -208,17 +192,20 @@ These are the APIs available for testing purposes.
 2. `Get Booking`
 3. `Get Venue`
    
-    6.1 Getting User Information - /users/{user_id} (GET)
+    6.1 Getting User Information - /catalog/user/{user_id} (GET)
 	
     Returns the information that is linked to a User
         
         Returns:
         {
+            "user_id": "int",
+            "user_type": "int",
             "username": "string",
-            "date_signed_up": "timestamp", /* With timezone */
+            "password": "string", /* With timezone */
+            "time_sign_up": "timestamp" /* With timezone */
         }
 
-   6.2 Get Booking - /book/{booking_id} (GET)
+   6.2 Get Booking - /catalog/booking/{booking_id} (GET)
 
    Retrives the booking associated with the given booking id
 
@@ -227,21 +214,6 @@ These are the APIs available for testing purposes.
             "venue_id": "integer",
             "performer_id": "integer",
             "time_start": "timestamp", /* With timezone */
-            "time_end": "timestamp" /* With timezone */
-        }
-
-   6.3 Get Venue - /venues/{venue_id} (GET)
-    
-   Retrives the venue associated with the given venue id
-        
-        Returns:
-        {
-            "venue_id": "integer", /* Between 1 and 10,000 */
-            "name": "string",
-   	    "location": "string",
-   	    "capacity": "integer", /* Between 1 and 100,000 */
-            "price": "integer", /* Between 1 and 100,000 */
-            "time_available": "timestamp", /* With timezone */
             "time_end": "timestamp" /* With timezone */
         }
         
