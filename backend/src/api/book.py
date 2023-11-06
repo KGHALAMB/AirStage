@@ -30,6 +30,24 @@ class Booking(BaseModel):
     time_start: str 
     time_end: str
 
+
+@router.get("/{booking_id}")
+def get_booking(booking_id: int):
+
+    json = {}
+    with db.engine.begin() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :a"), {"a": booking_id})
+        for row in result:
+            json = {
+                "venue_id": row.venue_id,
+                "performer_id": row.performer_id,
+                "time_start": row.time_start,
+                "time_end": row.time_end
+            }
+
+    return json
+
+
 @router.post("/create/request_venue/{performer_id}")
 def book_venue(performer_id: int, venue: Venue):
 
