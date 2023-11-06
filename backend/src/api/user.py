@@ -41,7 +41,7 @@ def signup(user: User):
 
     return { "success": False }
 
-@router.get("/signin/")
+@router.post("/signin/")
 def signup(user: User):
 
     with db.engine.begin() as connection:
