@@ -202,3 +202,37 @@ curl -X 'POST' \
 {
   "success": true
 }
+
+## 5. Various Testing Endpoints
+
+These are the APIs available for testing purposes.
+1. `Getting User Information`
+2. `Get Booking`
+3. `Get Venue`
+   
+    5.1 Getting User Information - /catalog/user/{user_id} (GET)
+	
+    Returns the information that is linked to a User
+        
+        Returns:
+        {
+            "user_id": "int",
+            "user_type": "int",
+            "username": "string",
+            "password": "string", /* With timezone */
+            "time_sign_up": "timestamp" /* With timezone */
+        }
+
+   5.2 Get Booking - /catalog/booking/{booking_id} (GET)
+
+   Retrives the booking associated with the given booking id
+
+   	Returns:
+        {
+            "venue_id": "integer",
+            "performer_id": "integer",
+            "time_start": "timestamp", /* With timezone */
+            "time_end": "timestamp" /* With timezone */
+        }
+   
+# Testing Results
