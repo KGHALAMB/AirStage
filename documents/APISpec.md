@@ -116,44 +116,15 @@ The API calls are made in this sequence when a booking is to be altered
         {
             "success": "boolean"
         }
-
-## 4. Modifying a Booking
-
-The API calls are made in this sequence when a booking is to be removed
-1. `Get Booking`
-2. `Cancel Booking`
-
-   4.1 Get Booking - /catalog/booking/{booking_id} (GET)
-
-   Retrieves the information for a bookingn given its id.
-
-        Request: N/A
-
-        Returns:
-        {
-            "venue_id": row.venue_id,
-            "performer_id": row.performer_id,
-            "time_start": row.time_start,
-            "time_end": row.time_end
-        }  
-
-   4.2 Cancel Booking - /book/bookings/cancel/{booking_id} (POST)
-    
-   Cancels a booking given its id.
-            
-        Returns:
-        {
-            "success": "boolean"
-        }
     
 
-## 5. User signing up/in
+## 4. User signing up/in
 
 The API calls are made in this sequence when a user is to sign up/login
 1. `Signing up as a user`
 2. `Signing in as a user`
 
-    5.1 Signing up as a user - /user/signup/ (POST)
+    4.1 Signing up as a user - /user/signup/ (POST)
 
     Adds a users credentials to the database
 
@@ -169,7 +140,7 @@ The API calls are made in this sequence when a user is to sign up/login
             "success": "boolean"
         }
 
-    5.2 Signing in as a user - /user/signin/ (POST)
+    4.2 Signing in as a user - /user/signin/ (POST)
 
     Checks if inputted username and password is associated with an account
 
@@ -185,14 +156,14 @@ The API calls are made in this sequence when a user is to sign up/login
             "success": "boolean"
         }
 
-## 6. Various Testing Endpoints
+## 5. Various Testing Endpoints
 
 These are the APIs available for testing purposes.
 1. `Getting User Information`
 2. `Get Booking`
 3. `Get Venue`
    
-    6.1 Getting User Information - /catalog/user/{user_id} (GET)
+    5.1 Getting User Information - /catalog/user/{user_id} (GET)
 	
     Returns the information that is linked to a User
         
@@ -205,7 +176,7 @@ These are the APIs available for testing purposes.
             "time_sign_up": "timestamp" /* With timezone */
         }
 
-   6.2 Get Booking - /catalog/booking/{booking_id} (GET)
+   5.2 Get Booking - /catalog/booking/{booking_id} (GET)
 
    Retrives the booking associated with the given booking id
 
