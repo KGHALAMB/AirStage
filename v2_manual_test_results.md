@@ -70,7 +70,7 @@ curl -X 'POST' \
   "success": true
 }
 
-## Example Workflow: User signing up/in
+## Example Workflow: User editing booking
 
 The API calls are made in this sequence when a booking is to be altered
 1. `Get Booking`
