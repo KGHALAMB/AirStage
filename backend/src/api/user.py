@@ -45,7 +45,7 @@ def signup(user: User):
                     result = connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :d)"),
                                                     {"a": user.username, "b": "San Francisco", "c": 10000, "d": 10000, "e": user_id})
                 return { "success": True }
-
+    print("ERROR: USER ALREADY EXISTS")
     return { "success": False }
 
 @router.post("/signin/")
@@ -57,5 +57,5 @@ def signup(user: User):
                                         {"a": user.username, "b": user.password})
         for row in result:
             return { "success": True }
-
+    print("ERROR: USER DOES NOT EXIST")
     return { "success": False }
