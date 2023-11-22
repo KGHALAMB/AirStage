@@ -70,7 +70,7 @@ def book_venue(performer_id: int, venue: Venue):
                 result = connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
                                             {"a": performer_id, "b": venue.venue_id, "c": time_available, "d": time_end})
                 return { "success": True }
-
+    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
     return { "success": False }
 
 @router.post("/create/request_performer/{venue_id}")
@@ -102,7 +102,7 @@ def book_venue(venue_id: int, performer: Performer):
                 result = connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
                                             {"a": performer.performer_id, "b": venue_id, "c": time_available, "d": time_end})
                 return { "success": True }
-
+    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
     return { "success": False }
 
 
@@ -120,6 +120,7 @@ def modify_booking(booking_id: int, booking: Booking):
             time_end = row.time_end
 
         if not booking_exists:
+            print("ERROR: THE REQEUSTED BOOKING DOES NOT EXIST")
             return { "success": False }
 
         connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE id = :booking_id;"),
@@ -130,6 +131,7 @@ def modify_booking(booking_id: int, booking: Booking):
         result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
         for row in result:
             if row.performer_id == performer_id and row.venue_id == venue_id and row.time_start == time_start and row.time_end == time_end:
+                print("ERROR: MODIFICATION IS THE SAME AS THE ORIGINAL")
                 return { "success": False }
 
     return { "success": True }
@@ -149,6 +151,7 @@ def delete_booking(booking_id: int):
         result = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM bookings"))
         for row in result:
             if num_rows == row.num_rows:
+                print("ERROR: FAILUR IN CREATING BOOKING")
                 return { "success": False }
 
     return { "success": True }
