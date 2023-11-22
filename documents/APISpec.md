@@ -14,11 +14,11 @@ The API calls are made in this sequence when a performer wants to book a venue t
          Returns:
          [
              {
-                 "venue_id": "integer", /* Between 1 and 10,000 */
+                 "venue_id": "integer",
                  "name": "string",
                  "location": "string",
-                 "capacity": "integer", /* Between 1 and 100,000 */
-                 "price": "integer", /* Between 1 and 100,000 */
+                 "capacity": "integer",
+                 "price": "integer",
              }
          ]
 
@@ -52,10 +52,10 @@ The API calls are made in this sequence when a venue wants to book a performer t
          Returns:
          [
              {
-                 "performer_id": "integer", /* Between 1 and 10,000 */
+                 "performer_id": "integer",
                  "name": "string",
-                 "capacity_preference": "integer", /* Between 1 and 100,000 */
-                 "price": "integer", /* Between 1 and 100,000 */
+                 "capacity_preference": "integer",
+                 "price": "integer"
              }
          ]
 
@@ -90,10 +90,10 @@ The API calls are made in this sequence when a booking is to be altered
 
          Returns:
          {
-             "venue_id": row.venue_id,
-             "performer_id": row.performer_id,
-             "time_start": row.time_start,
-             "time_end": row.time_end
+             "venue_id": "integer",
+             "performer_id": "integer",
+             "time_start": "timestamp", /* With timezone */
+             "time_end": "timestamp" /* With timezone */
          }
 
     3.2 Edit Booking - /book/bookings/edit/{booking_id} (POST)
@@ -102,8 +102,8 @@ The API calls are made in this sequence when a booking is to be altered
 
          Request:
          {
-             "performer_id": "integer", /* Between 1 and 10,000 */
-             "venue_id": "integer" /* Between 1 and 10,00 */
+             "performer_id": "integer",
+             "venue_id": "integer",
              "time_start": "timestamp", /* With timezone */
              "time_end": "timestamp" /* With timezone */
          }
@@ -164,6 +164,8 @@ These are the APIs available for testing purposes.
 
     Returns the information that is linked to a User
 
+         Request: N/A
+
          Returns:
          {
              "user_id": "int",
@@ -171,16 +173,4 @@ These are the APIs available for testing purposes.
              "username": "string",
              "password": "string", /* With timezone */
              "time_sign_up": "timestamp" /* With timezone */
-         }
-
-    5.2 Get Booking - /catalog/booking/{booking_id} (GET)
-
-    Retrives the booking associated with the given booking id
-
-        Returns:
-         {
-             "venue_id": "integer",
-             "performer_id": "integer",
-             "time_start": "timestamp", /* With timezone */
-             "time_end": "timestamp" /* With timezone */
          }
