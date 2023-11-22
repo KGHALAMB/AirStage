@@ -56,8 +56,6 @@ The API calls are made in this sequence when a venue wants to book a performer t
                  "name": "string",
                  "capacity_preference": "integer", /* Between 1 and 100,000 */
                  "price": "integer", /* Between 1 and 100,000 */
-                 "time_available": "timestamp", /* With timezone */
-                 "time_end": "timestamp" /* With timezone */
              }
          ]
 
@@ -68,9 +66,6 @@ The API calls are made in this sequence when a venue wants to book a performer t
          Request:
          {
              "performer_id": "integer",
-                "name": "string",
-            "capacity_preference": "integer", /* Between 1 and 100,000 */
-             "price": "integer", /* Between 1 and 100,000 */
              "time_start": "timestamp", /* With timezone */
              "time_end": "timestamp" /* With timezone */
          }

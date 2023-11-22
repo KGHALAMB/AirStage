@@ -46,8 +46,8 @@ class VenueBooking(BaseModel):
 
 class PerformerBooking(BaseModel):
     performer_id: int
-    time_start: str
-    time_end: str
+    time_start: datetime
+    time_end: datetime
 
 
 @router.post("/create/request_venue/{performer_id}")
@@ -70,7 +70,7 @@ def book_venue(performer_id: int, venue_booking: VenueBooking):
                 time_start = row.time_start
                 time_finish = row.time_end
                 
-                if (venue_booking.time_start <= time_finish) and (venue_booking.time_end >= time_start):
+                if (venue_booking.time_start < time_finish) and (venue_booking.time_end > time_start):
                     time_works = False
             
             if time_works:
@@ -100,7 +100,7 @@ def book_venue(venue_id: int, performer_booking: PerformerBooking):
                 time_start = row.time_start
                 time_finish = row.time_end
 
-                if (performer_booking.time_start <= time_finish) and (performer_booking.time_end >= time_start):
+                if (performer_booking.time_start < time_finish) and (performer_booking.time_end > time_start):
                     time_works = False
             
             if time_works:
