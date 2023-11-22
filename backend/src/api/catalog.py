@@ -24,9 +24,7 @@ def get_venues():
                 "name": row.name,
                 "location": row.location,
                 "capacity": row.capacity,
-                "price": row.price,
-                "time_available": row.time_available,
-                "time_end": row.time_end,
+                "price": row.price
             })
 
     return json
