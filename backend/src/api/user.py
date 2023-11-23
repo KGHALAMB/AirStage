@@ -25,8 +25,9 @@ def signup(user: User):
 
     with db.engine.begin() as connection:
         user_exists = False
-        result = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a"), {"a": user.username})
-        for row in result:
+        user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a"), {"a": user.username})
+        user_already = user_query.first()
+        if not user_already is None:
             user_exists = True
         
         if not user_exists:
@@ -35,27 +36,30 @@ def signup(user: User):
                     type = 0
                 else:
                     type = 1
-                result = connection.execute(sqlalchemy.text("INSERT INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
+                user_id_query = connection.execute(sqlalchemy.text("INSERT INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
                                                 {"a": type, "b": user.username, "c": user.password})
-                user_id = result.first()[0]
+                user_id = user_id_query.first()[0]
+                print(user_id)
                 if type == 0:
-                    result = connection.execute(sqlalchemy.text("INSERT INTO performers (name, capacity_preference, price, user_id) VALUES (:a, :b, :c, :d)"),
+                    connection.execute(sqlalchemy.text("INSERT INTO performers (name, capacity_preference, price, user_id) VALUES (:a, :b, :c, :d)"),
                                                     {"a": user.username, "b": 10000, "c": 10000, "d": user_id})
                 else:
-                    result = connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :d)"),
+                    connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :e)"),
                                                     {"a": user.username, "b": "San Francisco", "c": 10000, "d": 10000, "e": user_id})
-                return { "success": True }
+                return { "user_id": user_id, "success": True }
+
     print("ERROR: USER ALREADY EXISTS")
-    return { "success": False }
+    return { "user_id": -1, "success": False }
 
 @router.post("/signin/")
 def signup(user: User):
 
     with db.engine.begin() as connection:
-        user_exists = False
-        result = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a AND password = :b"),
+        user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a AND password = :b"),
                                         {"a": user.username, "b": user.password})
-        for row in result:
+        user_already = user_query.first()
+        if not user_already is None:
             return { "success": True }
-    print("ERROR: USER DOES NOT EXIST")
+        
+    print("ERROR: LOGIN FAILED")
     return { "success": False }
