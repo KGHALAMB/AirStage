@@ -33,66 +33,73 @@ class PerformerBooking(BaseModel):
     time_end: datetime
 
 
-@router.post("/create/request_venue/{performer_id}")
-def book_venue(performer_id: int, venue_booking: VenueBooking):
+def get_capacities(performer_id, venue_id):
 
     with db.engine.begin() as connection:
         performer_query = connection.execute(sqlalchemy.text("SELECT * FROM performers WHERE performer_id = :a"), {"a": performer_id})
         performer = performer_query.first()
         capacity_preference = performer.capacity_preference
 
-        venue_query = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a": venue_booking.venue_id})
+        venue_query = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a": venue_id})
         venue = venue_query.first()
         capacity = venue.capacity
         price = venue.price
 
+    return capacity, capacity_preference, price
+
+def check_availability(user_time_start, user_time_end, booking_time_start, booking_time_finish):
+
+    if (user_time_start < booking_time_finish) and (user_time_end > booking_time_start):
+        return False
+    return True
+
+
+@router.post("/create/request_venue/{performer_id}")
+def book_venue(performer_id: int, venue_booking: VenueBooking):
+
+    with db.engine.begin() as connection:
+        
+        capacity, capacity_preference, price = get_capacities(performer_id, venue_booking.venue_id)
+
         if capacity >= capacity_preference:
-            time_works = True
             bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE venue_id = :a"), {"a": venue_booking.venue_id})
             for booking in bookings:
                 booking_time_start = booking.time_start
                 booking_time_finish = booking.time_end
                 
-                if (venue_booking.time_start < booking_time_finish) and (venue_booking.time_end > booking_time_start):
-                    time_works = False
-            
-            if time_works:
-                connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
-                                            {"a": performer_id, "b": venue_booking.venue_id, "c": venue_booking.time_start, "d": venue_booking.time_end})
-                return { "success": True }
+                if not check_availability(venue_booking.time_start, venue_booking.time_end, booking_time_start, booking_time_finish):
+                    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+                    return { "success": False }
+                
+            connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
+                                        {"a": performer_id, "b": venue_booking.venue_id, "c": venue_booking.time_start, "d": venue_booking.time_end})
+            return { "success": True }
 
-    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+    print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
     return { "success": False }
 
 @router.post("/create/request_performer/{venue_id}")
 def book_venue(venue_id: int, performer_booking: PerformerBooking):
 
     with db.engine.begin() as connection:
-        venue_query = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a": venue_id})
-        venue = venue_query.first()
-        capacity = venue.capacity
 
-        performer_query = connection.execute(sqlalchemy.text("SELECT * FROM performers WHERE performer_id = :a"), {"a": performer_booking.performer_id})
-        performer = performer_query.first()
-        capacity_preference = performer.capacity_preference
-        price = performer.price
+        capacity, capacity_preference, price = get_capacities(performer_booking.performer_id, venue_id)
 
         if capacity >= capacity_preference:
-            time_works = True
             bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE performer_id = :a"), {"a": performer_booking.performer_id})
             for booking in bookings:
                 booking_time_start = booking.time_start
                 booking_time_finish = booking.time_end
 
-                if (performer_booking.time_start < booking_time_finish) and (performer_booking.time_end > booking_time_start):
-                    time_works = False
+                if not check_availability(performer_booking.time_start, performer_booking.time_end, booking_time_start, booking_time_finish):
+                    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+                    return { "success": False }
             
-            if time_works:
-                connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
-                                            {"a": performer_booking.performer_id, "b": venue_id, "c": performer_booking.time_start, "d": performer_booking.time_end})
-                return { "success": True }
+            connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
+                                    {"a": performer_booking.performer_id, "b": venue_id, "c": performer_booking.time_start, "d": performer_booking.time_end})
+            return { "success": True }
     
-    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+    print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
     return { "success": False }
 
 
