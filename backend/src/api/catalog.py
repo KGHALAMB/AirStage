@@ -11,7 +11,7 @@ router = APIRouter(
     # dependencies=[Depends(auth.get_api_key)],
 )
 
-
+# Endpoint to retrieve all venues
 @router.get("/venues/")
 def get_venues():
 
@@ -29,7 +29,7 @@ def get_venues():
 
     return json
 
-
+# Endpoint to retrieve all performers
 @router.get("/performers/")
 def get_performers():
 
@@ -46,7 +46,7 @@ def get_performers():
 
     return json
 
-
+# Endpoint to retreive a specific booking
 @router.get("/booking/{booking_id}")
 def get_booking(booking_id: int):
 
@@ -64,6 +64,7 @@ def get_booking(booking_id: int):
 
     return json
 
+# Endpoint to retrieve a specific user's information
 @router.get("/user/{user_id}")
 def get_user(user_id: int):
 
