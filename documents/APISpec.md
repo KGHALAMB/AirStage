@@ -172,6 +172,6 @@ These are the APIs available for testing purposes.
              "user_id": "int",
              "user_type": "string",
              "username": "string",
-             "password": "string", /* With timezone */
+             "password": "string",
              "time_sign_up": "timestamp" /* With timezone */
          }

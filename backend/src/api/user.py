@@ -37,7 +37,7 @@ def signup(user: User):
             # Attempt to create a new user
             type = 0 if user.user_type == "performer" else 1
             user_id_query = connection.execute(sqlalchemy.text("INSERT INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
-                                            {"a": type, "b": user.username, "c": user.password})
+                                            {"a": type, "b": user.username, "c": hash(user.password)})
             user_id = user_id_query.first()[0]
             
             # Attempt to insert new performer/venue into respective table
@@ -56,7 +56,7 @@ def signin(user: User):
     with db.engine.begin() as connection:
         # Check if a user exists with the same username and password
         user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a AND password = :b"),
-                                        {"a": user.username, "b": user.password})
+                                        {"a": user.username, "b": hash(user.password)})
         user_already = user_query.first()
         if not user_already is None:
             return { "success": True }
