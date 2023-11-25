@@ -133,6 +133,7 @@ The API calls are made in this sequence when a user is to sign up/login
 
         Returns:
         {
+            "user_id": "integer",
             "success": "boolean"
         }
 
@@ -169,8 +170,8 @@ These are the APIs available for testing purposes.
          Returns:
          {
              "user_id": "int",
-             "user_type": "int",
+             "user_type": "string",
              "username": "string",
-             "password": "string", /* With timezone */
+             "password": "string",
              "time_sign_up": "timestamp" /* With timezone */
          }
