@@ -41,7 +41,7 @@ def signup(user: User):
             type = 0 if user.user_type == UserType.performer else 1
     
             result = connection.execute(sqlalchemy.text("INSERT  INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
-                                            {"a": type, "b": user.username, "c": user.password})
+                                            {"a": type, "b": user.username, "c": hash(user.password)})
             user_id = result.first()[0]
             if type == UserType.performer:
                 result = connection.execute(sqlalchemy.text("INSERT INTO performers (name, capacity_preference, price, user_id) VALUES (:a, :b, :c, :d)"),
