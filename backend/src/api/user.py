@@ -4,6 +4,7 @@ from sqlite3 import Timestamp
 from time import time
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from enum import Enum
 #from src.api import auth
 
 import sqlalchemy
@@ -15,10 +16,14 @@ router = APIRouter(
     #dependencies=[Depends(auth.get_api_key)],
 )
 
+class UserType(str, Enum):
+    performer = "performer"
+    venue = "venue"
+
 class User(BaseModel):
     username: str
     password: str
-    user_type: str
+    user_type: UserType
 
 # Endpoint to signup to create a new user
 @router.post("/signup/")
@@ -32,22 +37,22 @@ def signup(user: User):
             print("ERROR: USER ALREADY EXISTS")
             return { "user_id": -1, "success": False }
         
-        # If new username and user type is performer or venue
-        if user.user_type == "performer" or user.user_type == "venue":
-            # Attempt to create a new user
-            type = 0 if user.user_type == "performer" else 1
-            user_id_query = connection.execute(sqlalchemy.text("INSERT INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
-                                            {"a": type, "b": user.username, "c": hash(user.password)})
-            user_id = user_id_query.first()[0]
-            
-            # Attempt to insert new performer/venue into respective table
-            if user.user_type == "performer":
-                connection.execute(sqlalchemy.text("INSERT INTO performers (name, capacity_preference, price, user_id) VALUES (:a, :b, :c, :d)"),
+        if user.user_type == UserType.performer or user.user_type == UserType.venue:
+            type = 0 if user.user_type == UserType.performer else 1
+    
+            result = connection.execute(sqlalchemy.text("INSERT  INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
+                                            {"a": type, "b": user.username, "c": user.password})
+            user_id = result.first()[0]
+            if type == UserType.performer:
+                result = connection.execute(sqlalchemy.text("INSERT INTO performers (name, capacity_preference, price, user_id) VALUES (:a, :b, :c, :d)"),
                                                 {"a": user.username, "b": 10000, "c": 10000, "d": user_id})
             else:
-                connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :e)"),
+                result = connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :e)"),
                                                 {"a": user.username, "b": "San Francisco", "c": 10000, "d": 10000, "e": user_id})
             return { "user_id": user_id, "success": True }
+
+    print("ERROR: USER TYPE IS INVALID")
+    return { "user_id": -1, "success": False }
     
 # Endpoint for a user to signin
 @router.post("/signin/")
