@@ -59,8 +59,23 @@ curl -X 'GET' \
 ]
 
 1.
+curl -X 'POST' \
+  'http://127.0.0.1:3000/book/create/request_performer/1' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "performer_id": 2,
+  "name": "Taylor Swift",
+  "capacity_preference": 100,
+  "price": 1000,
+  "time_available": "2023-11-06T05:00:00+00:00",
+  "time_end": "2023-11-06T07:05:00+00:00"
+}'
 
-
+2.
+{
+  "success": true
+}
 
 ## 3. Modifying a Booking
 
@@ -201,4 +216,64 @@ curl -X 'POST' \
 2.
 {
   "success": true
+}
+
+## 5. Various Testing Endpoints
+
+These are the APIs available for testing purposes.
+1. `Getting User Information`
+2. `Get Booking`
+3. `Get Venue`
+   
+    5.1 Getting User Information - /catalog/user/{user_id} (GET)
+	
+    Returns the information that is linked to a User
+        
+        Returns:
+        {
+            "user_id": "int",
+            "user_type": "int",
+            "username": "string",
+            "password": "string", /* With timezone */
+            "time_sign_up": "timestamp" /* With timezone */
+        }
+
+   5.2 Get Booking - /catalog/booking/{booking_id} (GET)
+
+   Retrives the booking associated with the given booking id
+
+   	Returns:
+        {
+            "venue_id": "integer",
+            "performer_id": "integer",
+            "time_start": "timestamp", /* With timezone */
+            "time_end": "timestamp" /* With timezone */
+        }
+   
+# Testing Results
+1. 
+curl -X 'GET' \
+  'http://127.0.0.1:3000/catalog/user/1' \
+  -H 'accept: application/json'
+   
+2.
+{
+  "user_id": 1,
+  "user_type": 0,
+  "username": "Arctic1ce",
+  "password": "GamingAxel202/#$%",
+  "time_sign_up": "2023-11-05T22:44:52.519186+00:00"
+}
+
+1. 
+curl -X 'GET' \
+  'http://127.0.0.1:3000/catalog/booking/3' \
+  -H 'accept: application/json'
+   
+2. 
+{
+  "venue_id": 1,
+  "performer_id": 1,
+  "time_start": "2023-11-06T22:00:00+00:00",
+  "time_end": "2023-11-07T00:00:00+00:00"
 }

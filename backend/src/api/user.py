@@ -25,42 +25,46 @@ class User(BaseModel):
     password: str
     user_type: UserType
 
+# Endpoint to signup to create a new user
 @router.post("/signup/")
 def signup(user: User):
 
     with db.engine.begin() as connection:
-        user_exists = False
-        result = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a"), {"a": user.username})
-        for row in result:
-            user_exists = True
+        # Check if a user already exists with the same username
+        user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a"), {"a": user.username})
+        user_already = user_query.first()
+        if not user_already is None:
+            print("ERROR: USER ALREADY EXISTS")
+            return { "user_id": -1, "success": False }
         
-        if not user_exists:
-            if user.user_type == UserType.performer:
-                type = 0
-            elif user.user_type == UserType.venue:
-                type = 0
+        if user.user_type == UserType.performer or user.user_type == UserType.venue:
+            type = 0 if user.user_type == UserType.performer else 1
     
             result = connection.execute(sqlalchemy.text("INSERT  INTO users (user_type, username, password) VALUES (:a, :b, :c) RETURNING user_id"),
                                             {"a": type, "b": user.username, "c": user.password})
             user_id = result.first()[0]
-            if type == UserType.performer.value:
+            if type == UserType.performer:
                 result = connection.execute(sqlalchemy.text("INSERT INTO performers (name, capacity_preference, price, user_id) VALUES (:a, :b, :c, :d)"),
                                                 {"a": user.username, "b": 10000, "c": 10000, "d": user_id})
             else:
                 result = connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :e)"),
                                                 {"a": user.username, "b": "San Francisco", "c": 10000, "d": 10000, "e": user_id})
-            return { "success": True }
+            return { "user_id": user_id, "success": True }
 
-    return { "success": False }
-
+    print("ERROR: USER TYPE IS INVALID")
+    return { "user_id": -1, "success": False }
+    
+# Endpoint for a user to signin
 @router.post("/signin/")
-def signup(user: User):
+def signin(user: User):
 
     with db.engine.begin() as connection:
-        user_exists = False
-        result = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a AND password = :b"),
-                                        {"a": user.username, "b": user.password})
-        for row in result:
+        # Check if a user exists with the same username and password
+        user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a AND password = :b"),
+                                        {"a": user.username, "b": hash(user.password)})
+        user_already = user_query.first()
+        if not user_already is None:
             return { "success": True }
-
+        
+    print("ERROR: LOGIN FAILED")
     return { "success": False }

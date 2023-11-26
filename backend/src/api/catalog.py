@@ -11,76 +11,78 @@ router = APIRouter(
     # dependencies=[Depends(auth.get_api_key)],
 )
 
-
+# Endpoint to retrieve all venues
 @router.get("/venues/")
 def get_venues():
 
     json = []
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM venues"))
-        for row in result:
+        venues = connection.execute(sqlalchemy.text("SELECT * FROM venues"))
+        for venue in venues:
             json.append({
-                "venue_id": row.venue_id,
-                "name": row.name,
-                "location": row.location,
-                "capacity": row.capacity,
-                "price": row.price,
-                "time_available": row.time_available,
-                "time_end": row.time_end,
+                "venue_id": venue.venue_id,
+                "name": venue.name,
+                "location": venue.location,
+                "capacity": venue.capacity,
+                "price": venue.price
             })
 
     return json
 
-
+# Endpoint to retrieve all performers
 @router.get("/performers/")
-def get_venues():
+def get_performers():
 
     json = []
     with db.engine.begin() as connection:
-        result = connection.execute(
-            sqlalchemy.text("SELECT * FROM performers"))
-        for row in result:
+        performers = connection.execute(sqlalchemy.text("SELECT * FROM performers"))
+        for performer in performers:
             json.append({
-                "performer_id": row.performer_id,
-                "name": row.name,
-                "capacity_preference": row.capacity_preference,
-                "price": row.price,
-                "time_available": row.time_available,
-                "time_end": row.time_end
+                "performer_id": performer.performer_id,
+                "name": performer.name,
+                "capacity_preference": performer.capacity_preference,
+                "price": performer.price
             })
 
     return json
 
-
+# Endpoint to retreive a specific booking
 @router.get("/booking/{booking_id}")
 def get_booking(booking_id: int):
 
     json = {}
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :a"), {"a": booking_id})
-        for row in result:
+        booking_query = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :a"), {"a": booking_id})
+        booking = booking_query.first()
+        if not booking is None:
             json = {
-                "venue_id": row.venue_id,
-                "performer_id": row.performer_id,
-                "time_start": row.time_start,
-                "time_end": row.time_end
+                "venue_id": booking.venue_id,
+                "performer_id": booking.performer_id,
+                "time_start": booking.time_start,
+                "time_end": booking.time_end
             }
 
     return json
 
+# Endpoint to retrieve a specific user's information
 @router.get("/user/{user_id}")
-def get_booking(user_id: int):
+def get_user(user_id: int):
 
     json = {}
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE user_id = :a"), {"a": user_id})
-        for row in result:
+        user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE user_id = :a"), {"a": user_id})
+        user = user_query.first()
+        if not user is None:
+            if user.user_type == 0:
+                user_type = "performer"
+            else:
+                user_type = "venue"
             json = {
-                "user_id": row.user_id,
-                "user_type": row.user_type,
-                "username": row.username,
-                "password": row.password,
-                "time_sign_up": row.time_sign_up
+                "user_id": user.user_id,
+                "user_type": user_type,
+                "username": user.username,
+                "password": user.password,
+                "time_sign_up": user.time_sign_up
             }
 
     return json
