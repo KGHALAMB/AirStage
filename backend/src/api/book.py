@@ -137,11 +137,7 @@ def modify_booking(booking_id: int, booking: Booking):
             # Attempt to update the booking and commit the changes
             connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE id = :booking_id"),
                                 {"performer_id": booking.performer_id, "venue_id": booking.venue_id, "time_start": booking.time_start, "time_end": booking.time_end, 'booking_id': booking_id})
-            connection.commit()
-
-    with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
-        with connection.begin():
-            # Retrieve the updated booking
+            
             updated_booking = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
             book = updated_booking.first()
             if not book is None:
