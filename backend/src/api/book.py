@@ -150,7 +150,7 @@ def modify_booking(booking_id: int, booking: Booking):
                 print("ERROR: BOOKING DOES NOT HAVE EXPECTED CHANGES")
                 return { "success": False }
 
-    return { "success": True }
+    return { "success": True } 
 
 # Endpoint to cancel an existing booking
 @router.post("/bookings/cancel/{booking_id}")
