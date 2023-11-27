@@ -119,33 +119,36 @@ def book_venue(venue_id: int, performer_booking: PerformerBooking):
 @router.post("/bookings/edit/{booking_id}")
 def modify_booking(booking_id: int, booking: Booking):
 
-    with db.engine.begin() as connection:
-        # Check if a booking exists for the given booking id
-        booking_query = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
-        book = booking_query.first()
-        if book is None:
-            print("ERROR: THE REQEUSTED BOOKING DOES NOT EXIST")
-            return { "success": False }
+    with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
+        with connection.begin():
 
-        performer_id = book.performer_id
-        venue_id = book.venue_id
-        time_start = book.time_start
-        time_end = book.time_end
-
-        # Attempt to update the booking and commit the changes
-        connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE id = :booking_id"),
-                            {"performer_id": booking.performer_id, "venue_id": booking.venue_id, "time_start": booking.time_start, "time_end": booking.time_end, 'booking_id': booking_id})
-        connection.commit()
-
-    with db.engine.begin() as connection:
-        # Retrieve the updated booking
-        updated_booking = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
-        book = updated_booking.first()
-        if not book is None:
-            # Check if the updated booking changed any values
-            if booking.performer_id == performer_id and booking.venue_id == venue_id and booking.time_start == time_start and booking.time_end == time_end:
-                print("ERROR: MODIFICATION IS THE SAME AS THE ORIGINAL")
+            # Check if a booking exists for the given booking id
+            booking_query = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
+            book = booking_query.first()
+            if book is None:
+                print("ERROR: THE REQEUSTED BOOKING DOES NOT EXIST")
                 return { "success": False }
+
+            performer_id = book.performer_id
+            venue_id = book.venue_id
+            time_start = book.time_start
+            time_end = book.time_end
+
+            # Attempt to update the booking and commit the changes
+            connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE id = :booking_id"),
+                                {"performer_id": booking.performer_id, "venue_id": booking.venue_id, "time_start": booking.time_start, "time_end": booking.time_end, 'booking_id': booking_id})
+            connection.commit()
+
+    with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
+        with connection.begin():
+            # Retrieve the updated booking
+            updated_booking = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
+            book = updated_booking.first()
+            if not book is None:
+                # Check if the updated booking changed any values
+                if booking.performer_id == performer_id and booking.venue_id == venue_id and booking.time_start == time_start and booking.time_end == time_end:
+                    print("ERROR: MODIFICATION IS THE SAME AS THE ORIGINAL")
+                    return { "success": False }
 
     return { "success": True }
 
