@@ -59,59 +59,61 @@ def check_availability(user_time_start, user_time_end, booking_time_start, booki
 @router.post("/create/request_venue/{performer_id}")
 def book_venue(performer_id: int, venue_booking: VenueBooking):
 
-    with db.engine.begin() as connection:
+    with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
+        with connection.begin():
         
-        capacity, capacity_preference, price = get_capacities(performer_id, venue_booking.venue_id)
+            capacity, capacity_preference, price = get_capacities(performer_id, venue_booking.venue_id)
 
-        # Check if the venue has enough capacity for the performer
-        if capacity >= capacity_preference:
-            # Get all bookings of the venue
-            bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE venue_id = :a"), {"a": venue_booking.venue_id})
-            for booking in bookings:
-                booking_time_start = booking.time_start
-                booking_time_finish = booking.time_end
+            # Check if the venue has enough capacity for the performer
+            if capacity >= capacity_preference:
+                # Get all bookings of the venue
+                bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE venue_id = :a"), {"a": venue_booking.venue_id})
+                for booking in bookings:
+                    booking_time_start = booking.time_start
+                    booking_time_finish = booking.time_end
+                    
+                    # Check if the requested booking has overlap with any existing bookings of the venue
+                    if not check_availability(venue_booking.time_start, venue_booking.time_end, booking_time_start, booking_time_finish):
+                        print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+                        return { "success": False }
                 
-                # Check if the requested booking has overlap with any existing bookings of the venue
-                if not check_availability(venue_booking.time_start, venue_booking.time_end, booking_time_start, booking_time_finish):
-                    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
-                    return { "success": False }
-            
-            # Create the booking if everything checks out
-            connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
-                                        {"a": performer_id, "b": venue_booking.venue_id, "c": venue_booking.time_start, "d": venue_booking.time_end})
-            return { "success": True }
+                # Create the booking if everything checks out
+                connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
+                                            {"a": performer_id, "b": venue_booking.venue_id, "c": venue_booking.time_start, "d": venue_booking.time_end})
+                return { "success": True }
 
-    print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
-    return { "success": False }
+            print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
+            return { "success": False }
 
 # Endpoint for a venue to book a performer
 @router.post("/create/request_performer/{venue_id}")
 def book_venue(venue_id: int, performer_booking: PerformerBooking):
 
-    with db.engine.begin() as connection:
+    with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
+        with connection.begin():
 
-        capacity, capacity_preference, price = get_capacities(performer_booking.performer_id, venue_id)
+            capacity, capacity_preference, price = get_capacities(performer_booking.performer_id, venue_id)
 
-        # Check if the venue has enough capacity for the performer
-        if capacity >= capacity_preference:
-            # Get all bookings of the performer
-            bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE performer_id = :a"), {"a": performer_booking.performer_id})
-            for booking in bookings:
-                booking_time_start = booking.time_start
-                booking_time_finish = booking.time_end
+            # Check if the venue has enough capacity for the performer
+            if capacity >= capacity_preference:
+                # Get all bookings of the performer
+                bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE performer_id = :a"), {"a": performer_booking.performer_id})
+                for booking in bookings:
+                    booking_time_start = booking.time_start
+                    booking_time_finish = booking.time_end
 
-                # Check if the requested booking has overlap with any existing bookings of the performer
-                if not check_availability(performer_booking.time_start, performer_booking.time_end, booking_time_start, booking_time_finish):
-                    print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
-                    return { "success": False }
-            
-            # Create the booking if everything checks out
-            connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
-                                    {"a": performer_booking.performer_id, "b": venue_id, "c": performer_booking.time_start, "d": performer_booking.time_end})
-            return { "success": True }
+                    # Check if the requested booking has overlap with any existing bookings of the performer
+                    if not check_availability(performer_booking.time_start, performer_booking.time_end, booking_time_start, booking_time_finish):
+                        print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+                        return { "success": False }
+                
+                # Create the booking if everything checks out
+                connection.execute(sqlalchemy.text("INSERT INTO bookings (performer_id, venue_id, time_start, time_end) VALUES (:a, :b, :c, :d)"),
+                                        {"a": performer_booking.performer_id, "b": venue_id, "c": performer_booking.time_start, "d": performer_booking.time_end})
+                return { "success": True }
     
-    print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
-    return { "success": False }
+            print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
+            return { "success": False }
 
 # Endpoint in order to edit an existing booking
 @router.post("/bookings/edit/{booking_id}")
