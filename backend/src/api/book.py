@@ -153,7 +153,7 @@ def modify_booking(booking_id: int, booking: Booking):
                 # Ensure that the new values are the expected ones
                 if book.performer_id != booking.performer_id or book.venue_id != booking.venue_id or book.time_start != booking.time_start or book.time_end != booking.time_end:
                     print("ERROR: BOOKING DOES NOT HAVE EXPECTED CHANGES")
-                    return { "success": False }
+                    return { "success": False } 
 
     return { "success": True } 
 
