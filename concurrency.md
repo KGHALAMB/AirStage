@@ -15,6 +15,9 @@ Before:
 
                 |---------- Transaction B ----------|
 
+   B Reads        SELECT * FROM bookings WHERE id=X
+   Booking X
+
    B Updates      UPDATE bookings SET ... WHERE id=X
    Booking X
                 |------- Transaction B Commits -------|
@@ -39,22 +42,85 @@ After:
    A Reads        SELECT * FROM bookings WHERE id=X
    Booking X
 
-   A Updates
-   Booking X      UPDATE bookings SET ... WHERE id=X
+   A Updates      UPDATE bookings SET ... WHERE id=X
+   Booking X
 
                 |------- Transaction A Commits -------|
 
                 |---------- Transaction B ----------|
 
-   Read           SELECT * FROM bookings WHERE id=X
+   B Reads        SELECT * FROM bookings WHERE id=X
    Booking X
 
-   Update
-   Booking X      UPDATE bookings SET ... WHERE id=X
+   B Updates      UPDATE bookings SET ... WHERE id=X
+   Booking X
 
                 |------- Transaction B Commits -------|
 
 ```
+
+### Write Skew
+
+Without concurrency control, this endpoint also has the potential for a write skew. If one of the concurrent calls updates
+only a few columns such as the (`performer_id`) and (`venue_id`) but then the other call updates with a new time of the event, then the id's and time of the performance will be mismatched since each update call updated a different part of the row concurrently.
+
+Before:
+
+```
+
+                |---------- Transaction A ----------|
+
+   A Reads        SELECT * FROM bookings WHERE id=X
+   Booking X
+
+                |---------- Transaction B ----------|
+
+   B Reads        SELECT * FROM bookings WHERE id=X
+   Booking X
+
+   B Updates      UPDATE bookings SET performer_id=5, venue_id=8 ... WHERE id=X
+   Booking X
+                |------- Transaction B Commits -------|
+
+                |---------- Transaction A ----------|
+
+   A Updates      UPDATE bookings SET ... time_start=2023-11-30 18:00:00+00:00, time_end=2023-11-30 20:00:00+00:00 WHERE id=X
+   Booking X
+
+                |------- Transaction A Commits -------|
+
+```
+
+As we can see, the id's of the performer and venue will be mismatched since they concurrently updated different columns of the same row in the database. As before, this issue is resolved by using a serializable isolation level in order to make each user complete their sequences of queries in a linear fashion.
+
+After:
+
+```
+
+                |---------- Transaction A ----------|
+
+   A Reads        SELECT * FROM bookings WHERE id=X
+   Booking X
+
+   A Updates      UPDATE bookings SET ... time_start=2023-11-30 18:00:00+00:00, time_end=2023-11-30 20:00:00+00:00 WHERE id=X
+   Booking X
+
+                |------- Transaction A Commits -------|
+
+                |---------- Transaction B ----------|
+
+   B Reads        SELECT * FROM bookings WHERE id=X
+   Booking X
+
+   B Updates      UPDATE bookings SET performer_id=5, venue_id=8, time_start=2023-11-29 12:00:00+00:00,
+   Booking X                                                      time_end=2023-11-29 16:00:00+00:00 ... WHERE id=X
+
+
+                |------- Transaction B Commits -------|
+
+```
+
+Due to isolating each transaction, the transactions run one after the other, so when B updates the booking, it will update the performer and venue id's whilst maintaining the original time assuming that the times provided by B are the original times of the booking.
 
 # Case 2
 
