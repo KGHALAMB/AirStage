@@ -140,18 +140,13 @@ def modify_booking(booking_id: int, booking: Booking):
         updated_booking = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
         book = updated_booking.first()
         if not book is None:
-            # Check if the updated booking changed any values
-            if booking.performer_id == performer_id and booking.venue_id == venue_id and booking.time_start == time_start and booking.time_end == time_end:
+            # Ensure that the new values of the booking are different than the old values
+            if book.performer_id == performer_id and book.venue_id == venue_id and book.time_start == time_start and book.time_end == time_end:
                 print("ERROR: MODIFICATION IS THE SAME AS THE ORIGINAL")
                 return { "success": False }
-            
-            performer_id = book.performer_id
-            venue_id = book.venue_id
-            time_start = book.time_start
-            time_end = book.time_end
 
-            # Check if another request to this endpoint finished first (to prevent lost update phenomenon)
-            if performer_id != booking.performer_id or booking.venue_id != venue_id or booking.time_start != time_start or booking.time_end != time_end:
+            # Ensure that the new values are the expected ones (to prevent lost update phenomenon in case another request to the same booking finished first)
+            if book.performer_id != booking.performer_id or book.venue_id != booking.venue_id or book.time_start != booking.time_start or book.time_end != booking.time_end:
                 print("ERROR: BOOKING DOES NOT HAVE EXPECTED CHANGES")
                 return { "success": False }
 
