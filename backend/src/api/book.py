@@ -144,6 +144,16 @@ def modify_booking(booking_id: int, booking: Booking):
             if booking.performer_id == performer_id and booking.venue_id == venue_id and booking.time_start == time_start and booking.time_end == time_end:
                 print("ERROR: MODIFICATION IS THE SAME AS THE ORIGINAL")
                 return { "success": False }
+            
+            performer_id = book.performer_id
+            venue_id = book.venue_id
+            time_start = book.time_start
+            time_end = book.time_end
+
+            # Check if another request to this endpoint finished first (to prevent lost update phenomenon)
+            if performer_id != booking.performer_id or booking.venue_id != venue_id or booking.time_start != time_start or booking.time_end != time_end:
+                print("ERROR: BOOKING DOES NOT HAVE EXPECTED CHANGES")
+                return { "success": False }
 
     return { "success": True }
 
