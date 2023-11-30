@@ -49,9 +49,22 @@
 11. This is a good suggestion! we will make sure implement this for v5 when we have to handle lots of users at once.  We didn't think of it prior because we never had enough entries for it to be important
 12. Database.py now uses environment variables
 13. Our service should not be open to injection attacks because we implemented parameter binding for all of our queries that were vulnerable
-IN PROGRESS
+14. This was already detailed in Saba's review
+15. All applicable endpoints should have some handling for the event of invalid or non-existent input
 
 # Schema/API Design Comments
 
+1. Already handled from previous reviews
+2. Good catch, the change has been made
+3. It has now been changed to text
+4. Added the foreign key constraints
+5. Capacity preference is no longer nullable
+6. The endpoint could be simplified, but we chose to have a more verbose endpoint to allow more clarity into what is actually happening in the transaction
+7. To my understanding PUT should be used when updating already existing data, in this case, we are creating a new booking entry
+8. This input validation has already been implemented
+9. thorough Error logging hass been added for whenever an endpoint returns {"success": False}
+10. This is an excellent idea, however it is not really in the scope of the assignment at the moment.  We will definitely implement this change if it reaches a higher priority
+11. Entry types now have timezones included, good catch
+12. change has been implemented, price columns can now hold decimal values
 
 
