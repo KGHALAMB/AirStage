@@ -29,3 +29,29 @@
 10. This doesn't really seem like a relevant suggestion since the id's for the other tables only have specific names because there are foreign key relations to other tables.
 11. Printed error messages have been added throughout our endpoints.
 12. This was updated so that there is a foreign key relation to the users table in both the venues and performers tables.
+
+
+
+## Peer Review: Arne Noori
+
+# Code Review Comments:
+
+1. good catch, error handling has been added
+2. input validation has been added to error before any transactions occur
+3. Because our dangerous transactions are handled within a single connection, if one errors none of the other transactions complete and the script notifies that an error occured.
+4. This was detailed in Saba's review
+5. Good catch, this has been handled
+6. We are aware of the user authentication being commented out.  We plan to implement this at the end of our development process for the project to secure the api
+7. This has been handled, good catch
+8. We are aware of the disparity in the formatting.  Once development is completed, we will comb through and put everything in a consistent format
+9. Logging has been added to help development understand what is happening during any errors (times when success is False)
+10. This is a good suggestion, we do have multiple test cases that we implement for every change.  They are currently not implemented as code however so if time permits we can implement this to make the testing process easier
+11. This is a good suggestion! we will make sure implement this for v5 when we have to handle lots of users at once.  We didn't think of it prior because we never had enough entries for it to be important
+12. Database.py now uses environment variables
+13. Our service should not be open to injection attacks because we implemented parameter binding for all of our queries that were vulnerable
+IN PROGRESS
+
+# Schema/API Design Comments
+
+
+
