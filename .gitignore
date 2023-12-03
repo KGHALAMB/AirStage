@@ -5,3 +5,6 @@ __pycache__
 /backend/src/api/__pycache__
 /backend/.env
 info.log
+.env
+AirStage.code-workspace
+supabase/
