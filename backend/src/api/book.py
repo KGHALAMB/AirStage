@@ -71,15 +71,16 @@ def book_performer(venue_id: int, performer_booking: PerformerBooking):
     with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
         with connection.begin():
 
-            capacity, capacity_preference = get_capacities(performer_booking.performer_id, venue_id)
 
             venue_exist = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"),
-                                              {"a" : venue_booking.venue_id}).first()
+                                              {"a" : venue_id}).first()
             performer_exist = connection.execute(sqlalchemy.text("SELECT * FROM performers WHERE performer_id = :a"),
-                                                {"a" : performer_id}).first()
+                                                {"a" : performer_booking.performer_id}).first()
             if venue_exist == None or performer_exist == None:
                 print("ERROR: INVALID INPUT FOR PERFORMER OR VENUE")
                 return {"success": False}
+            
+            capacity, capacity_preference = get_capacities(performer_booking.performer_id, venue_id)
 
 
             # Check if the venue has enough capacity for the performer
@@ -119,15 +120,16 @@ def book_performer(venue_id: int, performer_booking: PerformerBooking):
 def book_venue(performer_id: int, venue_booking: VenueBooking):
     with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
         with connection.begin():
-            capacity, capacity_preference = get_capacities(performer_id, venue_booking.venue_id)
 
             #check if venue and performer exist
-            venue_exist = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a" : venue_id}).first()
+            venue_exist = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"), {"a" : venue_booking.venue_id}).first()
             performer_exist = connection.execute(sqlalchemy.text("SELECT * FROM performers WHERE performer_id = :a"),
-                                                {"a" : performer_booking.performer_id}).first()
+                                                {"a" : performer_id}).first()
             if venue_exist == None or performer_exist == None:
                 print("ERROR: INVALID INPUT FOR PERFORMER OR VENUE")
                 return {"success": False}
+            
+            capacity, capacity_preference = get_capacities(performer_id, venue_booking.venue_id)
 
             # Check if the venue has enough capacity for the performer
             if capacity >= capacity_preference:
