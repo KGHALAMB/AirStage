@@ -218,6 +218,19 @@ def delete_booking(booking_id: int):
         num_rows_query = connection.execute(sqlalchemy.text("SELECT COUNT(*) AS num_rows FROM bookings"))
         num_rows = num_rows_query.first()
 
+        if num_rows == 0:
+            print("ERROR: NO BOOKINGS IN TABLE")
+            return {"success": False}
+
+        exists_query = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE id = :booking_id"),
+                                          {"booking_id": booking_id})
+        
+        returned_row = exists_query.fetchone()
+
+        if returned_row is None:
+            print("ERROR: BOOKING DOES NOT EXIST")
+            return {"success": False}
+
         # Attempt to delete the requested booking
         connection.execute(sqlalchemy.text("DELETE FROM bookings WHERE id = :booking_id"), {"booking_id": booking_id})
 

@@ -78,7 +78,7 @@ def signup(user: User):
                                     {"username": user.username})
             else:
                 result = connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :e)"),
-                                                {"a": user.username, "b": "San Francisco", "c": 10000, "d": 10000, "e": user_id})
+                                                {"a": user.username, "b": "Location", "c": 10000, "d": 10000, "e": user_id})
                 connection.execute(sqlalchemy.text("INSERT INTO availabilities (venue_id, time_available, time_end) " \
                                                    "SELECT venue_id, now(), now() + INTERVAL '1 day' FROM venues WHERE name = :username"),
                                     {"username": user.username})

@@ -9,7 +9,7 @@ The API calls are made in this sequence when a performer wants to book a venue t
 
     1.1 Get Open Venues - /catalog/venues/ (GET)
 
-    Retrieves all available venues that can be booked.
+    Retrieves all venues that can be booked.
 
          Returns:
          [
@@ -47,7 +47,7 @@ The API calls are made in this sequence when a venue wants to book a performer t
 
     2.1 Get Open Performers - /catalog/performers/ (GET)
 
-    Retrieves all available performers that can be booked.
+    Retrieves all performers that can be booked.
 
          Returns:
          [
