@@ -102,3 +102,65 @@
 
 
 
+## Peer Review Gibson Hooper
+
+# Code Review Comments:
+1. Handled in earlier review
+
+2. I agree, but this endpoint serves as a nice endpoint to have for debugging purposes
+
+3. Handled in earlier review
+
+4. Handled in earlier review
+
+5. Handled in earlier review  
+
+6. Handled in earlier review the return boolean value. Regarding the initial concerns, these are valid and have been added.
+
+7. I would agree filtering would be something possibly relevant for the get_booking() but given the scope of our project will not be something we will implement. I don’t find it to be useful for the other ones. This is because the users would not have access to the other endpoints if this application were fleshed out more. 
+
+8. Handled in earlier review 
+
+9. This comes down to coding preference in my opinion and I’m on the side of negative conditional 
+
+10. Handled in earlier review
+
+11. Handled in earlier review (users can update their values) and are given default values initially
+
+12. Handled in earlier review
+
+13. We have updated our schema (might not be in the old diagram) such that performers have a fee (venues book performers by paying them to perform at their venue). We are prioritizing having working code over an up-to-date ER diagram, so we will fix the diagram if we have extra time.
+
+14. Handled in earlier review
+
+# Schema/API Design Comments:
+1. True, but it can be useful for debugging purposes
+
+2. ER diagram is outdated and will be updated if we have time to do so.
+
+3. Good suggestion if we wanted to implement a search endpoint, but we will not be doing that due to our small scope of the project.
+
+4. I don’t agree with this because we’re operating under the assumption that performers simply want a venue big enough to fit how many people they’re hoping to perform for. Performers will still perform even if the venue’s capacity is much larger than their preference.
+
+5. We decided to move away from what the spec says and instead these endpoints simply return all performers regardless of availability. Spec has been updated to reflect this
+
+6. Handled in earlier review
+
+7. Handled in earlier review
+
+8. Handled in earlier review
+
+9. Good idea, but this is not in the scope of our project as it sits.
+
+10. Like the other points mentioned, this would naturally be the next step in expanding the project but is not in the scope of our current project. The main idea was to help bookings happen. 
+
+11. Handled in earlier review
+
+12. Yes, but with a simplistic model we’re going for now, this might not be necessary to do at this time
+
+13. I disagree about the necessity of this. We were able to construct our endpoints without needing to have this, so I don’t think this needs to be added.
+
+14. Indeed, the ER diagram is a bit outdated and needs some updating on our end when we have the time to do so.
+
+
+
