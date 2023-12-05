@@ -12,12 +12,17 @@ router = APIRouter(
 )
 
 # Endpoint to retrieve all venues
-@router.get("/venues/")
-def get_venues():
+@router.get("/venues/{page}/")
+def get_venues(page: int):
+    
+    if page < 0:
+        print("INVALID PAGE NUMBER")
+        return []
 
     json = []
     with db.engine.begin() as connection:
-        venues = connection.execute(sqlalchemy.text("SELECT * FROM venues"))
+        venues = connection.execute(sqlalchemy.text("SELECT * FROM venues OFFSET 100 * :page LIMIT 100"),
+                                    {"page": page})
         for venue in venues:
             json.append({
                 "venue_id": venue.venue_id,
@@ -30,12 +35,17 @@ def get_venues():
     return json
 
 # Endpoint to retrieve all performers
-@router.get("/performers/")
-def get_performers():
+@router.get("/performers/{page}/")
+def get_performers(page: int):
+    
+    if page < 0:
+        print("INVALID PAGE NUMBER")
+        return []
 
     json = []
     with db.engine.begin() as connection:
-        performers = connection.execute(sqlalchemy.text("SELECT * FROM performers"))
+        performers = connection.execute(sqlalchemy.text("SELECT * FROM performers OFFSET 100 * :page LIMIT 100"),
+                                        {"page": page})
         for performer in performers:
             json.append({
                 "performer_id": performer.performer_id,
