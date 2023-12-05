@@ -1,6 +1,7 @@
 # Fake Data Modeling
 
 ## Link to populate.py file: (`/populate.py`)
+https://github.com/KGHALAMB/AirStage/blob/main/populate.py
 
 ## Number of Rows Per Table:
 
