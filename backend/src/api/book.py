@@ -53,6 +53,10 @@ def check_availability(user_time_start, user_time_end, booking_time_start, booki
 
     if (user_time_start < booking_time_finish) and (user_time_end > booking_time_start):
         return False
+    
+    if (user_time_start == user_time_end):
+        return False
+    
     return True
 
 # Endpoint for a performer to book a venue
