@@ -31,7 +31,6 @@
 12. This was updated so that there is a foreign key relation to the users table in both the venues and performers tables.
 
 
-
 ## Peer Review: Arne Noori
 
 # Code Review Comments:
@@ -126,3 +125,37 @@
 13. I disagree about the necessity of this. We were able to construct our endpoints without needing to have this, so I don’t think this needs to be added.
 
 14. Indeed, the ER diagram is a bit outdated and needs some updating on our end when we have the time to do so.
+
+## Peer Review Alexander Specht
+
+# Code Review Comments:
+1. Handled in earlier review
+2. Updated single-row cases to return multiple rows for previous error resolution.
+3. Class object is needed to take in time period to know when to book. 
+4. Already handled in previous reviews
+5. Good catch, removed unused price variable
+6. Talked to professor, there is intent to this to separate processes.
+7. Handled in earlier review
+8. Good catch, edited so supabase sets default values
+9. Handled in earlier review
+10. Handled in earlier review
+11. Handled concurrency issues in earlier review
+12. Handled in earlier review
+13. Handled in earlier review
+14. We like to store these outputs in variables for readability. 
+15. Good catch, changed to check if performer/venue is already booked during the given time. 
+
+# Schema/API Design Comments:
+1. Already handled in previous reviews
+2. To my understanding, you are able to change the value of capacity_performance after setting it.
+3. The PerformerBooking parameter is a necessity since the user needs to input the intended start and end time they want to book the performer at as well in addition to which performer they want to book.
+4. Good suggestion, we implemented a helper function to abstract away similar code. 
+5. Already handled in previous reviews
+6. Already handled in previous reviews
+7. That's a good thought, but going into this, we were operating under the assumption that both a venue and a respective performer would be on the same page going into a booking. It's like a store transaction where both the store and the customer are aware of the purchase. 
+8. Good suggestion, ended up removing time available and time end for performers and users altogether and assumed their availability is for the whole day for this iteration.
+9. Good catch, implemented so that you are allowed to set a price when signing up. 
+10. We are under the assumption that performers are operating on a fixed rate for their performances.
+11. Created enum that contains usertype and the only parameter that is taken in is a class variable. 
+12. This is something we may consider to implement in future implementations, right now the assumption is the performer and the venue will work out if they're able to make it to the locations. 
+
