@@ -7,9 +7,9 @@ The API calls are made in this sequence when a performer wants to book a venue t
 1.  `Get Open Venues`
 2.  `Create Booking (Performer-side)`
 
-    1.1 Get Open Venues - /catalog/venues/ (GET)
+    1.1 Get Open Venues - /catalog/venues/{page} (GET)
 
-    Retrieves all available venues that can be booked.
+    Retrieves 100 venues that can be booked.  Venues displayed can be changed through the page parameter
 
          Returns:
          [
@@ -45,9 +45,9 @@ The API calls are made in this sequence when a venue wants to book a performer t
 1.  `Get Performers`
 2.  `Create Booking (Venue-side)`
 
-    2.1 Get Open Performers - /catalog/performers/ (GET)
+    2.1 Get Open Performers - /catalog/performers/{page} (GET)
 
-    Retrieves all available performers that can be booked.
+    Retrieves 100 performers that can be booked. Performers displayed can be changed through the page parameter
 
          Returns:
          [
