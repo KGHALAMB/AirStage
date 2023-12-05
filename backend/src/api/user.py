@@ -48,7 +48,7 @@ def signup(user: User):
                                                 {"a": user.username, "b": 10000, "c": 10000, "d": user_id})
             else:
                 result = connection.execute(sqlalchemy.text("INSERT INTO venues (name, location, capacity, price, user_id) VALUES (:a, :b, :c, :d, :e)"),
-                                                {"a": user.username, "b": "San Francisco", "c": 10000, "d": 10000, "e": user_id})
+                                                {"a": user.username, "b": "Location", "c": 10000, "d": 10000, "e": user_id})
             return { "user_id": user_id, "success": True }
 
     print("ERROR: USER TYPE IS INVALID")
