@@ -5,7 +5,10 @@ from time import time
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from datetime import datetime
+import pytz
 #from src.api import auth
+
+utc = pytz.UTC
 
 import sqlalchemy
 from src import database as db
@@ -60,6 +63,12 @@ def check_availability(user_time_start, user_time_end, booking_time_start, booki
     
     if (user_time_start > user_time_end):
         print("ERROR: CANNOT CREATE A BOOKING WITH START TIME AFTER END TIME")
+        return False
+    
+    time_start = user_time_start.replace(tzinfo=utc)
+    time_now = datetime.now().replace(tzinfo=utc)
+    if (time_start < time_now):
+        print("ERROR: CANNOT CREATE A BOOKING IN THE PAST")
         return False
     
     return True
