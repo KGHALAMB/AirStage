@@ -55,6 +55,11 @@ def check_availability(user_time_start, user_time_end, booking_time_start, booki
         return False
     
     if (user_time_start == user_time_end):
+        print("ERROR: CANNOT CREATE A BOOKING WITH NO TIME BETWEEN START AND END")
+        return False
+    
+    if (user_time_start > user_time_end):
+        print("ERROR: CANNOT CREATE A BOOKING WITH START TIME AFTER END TIME")
         return False
     
     return True
