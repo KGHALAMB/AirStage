@@ -30,6 +30,15 @@ class User(BaseModel):
 def signup(user: User):
 
     with db.engine.begin() as connection:
+        
+        if len(user.username < 1):
+            print("ERROR: CANNOT HAVE EMPTY USERNAME")
+            return { "user_id": -1, "success": False }
+        
+        if len(user.password < 1):
+            print("ERROR: CANNOT HAVE EMPTY PASSWORD")
+            return { "user_id": -1, "success": False }
+        
         # Check if a user already exists with the same username
         user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a"), {"a": user.username})
         user_already = user_query.first()
