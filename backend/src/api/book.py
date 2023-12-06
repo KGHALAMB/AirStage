@@ -22,8 +22,8 @@ router = APIRouter(
 class Booking(BaseModel):
     performer_id: int
     venue_id: int
-    time_start: str 
-    time_end: str
+    time_start: datetime 
+    time_end: datetime
 
 class VenueBooking(BaseModel):
     venue_id: int
@@ -200,9 +200,9 @@ def modify_booking(booking_id: int, booking: Booking):
                     if not check_availability(booking.time_start, booking.time_end, booking_time_start, booking_time_finish):
                         print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
                         return { "success": False }
-    
-            print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
-            return { "success": False }
+            else:
+                print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
+                return { "success": False }
 
             # Attempt to update the booking and commit the changes
             connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE id = :booking_id"),
