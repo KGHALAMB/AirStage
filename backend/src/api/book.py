@@ -163,6 +163,14 @@ def modify_booking(booking_id: int, booking: Booking):
             venue_id = book.venue_id
             time_start = book.time_start
             time_end = book.time_end
+            
+            venue_exist = connection.execute(sqlalchemy.text("SELECT * FROM venues WHERE venue_id = :a"),
+                                              {"a" : booking.venue_id}).first()
+            performer_exist = connection.execute(sqlalchemy.text("SELECT * FROM performers WHERE performer_id = :a"),
+                                                {"a" : booking.performer_id}).first()
+            if venue_exist == None or performer_exist == None:
+                print("ERROR: INVALID INPUT FOR PERFORMER OR VENUE")
+                return {"success": False}
 
             # Attempt to update the booking and commit the changes
             connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE id = :booking_id"),
