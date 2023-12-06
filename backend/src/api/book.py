@@ -174,6 +174,35 @@ def modify_booking(booking_id: int, booking: Booking):
             if venue_exist == None or performer_exist == None:
                 print("ERROR: INVALID INPUT FOR PERFORMER OR VENUE")
                 return {"success": False}
+            
+            capacity, capacity_preference, price = get_capacities(booking.performer_id, booking.venue_id)
+            
+             # Check if the venue has enough capacity for the performer
+            if capacity >= capacity_preference:
+                # Get all bookings of the performer
+                bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE performer_id = :a"), {"a": booking.performer_id})
+                for b in bookings:
+                    booking_time_start = b.time_start
+                    booking_time_finish = b.time_end
+
+                    # Check if the requested booking has overlap with any existing bookings of the performer
+                    if not check_availability(booking.time_start, booking.time_end, booking_time_start, booking_time_finish):
+                        print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+                        return { "success": False }
+                    
+                 # Get all bookings of the venue
+                bookings = connection.execute(sqlalchemy.text("SELECT * FROM bookings WHERE venue_id = :a"), {"a": booking.venue_id})
+                for b in bookings:
+                    booking_time_start = b.time_start
+                    booking_time_finish = b.time_end
+                    
+                    # Check if the requested booking has overlap with any existing bookings of the venue
+                    if not check_availability(booking.time_start, booking.time_end, booking_time_start, booking_time_finish):
+                        print("ERROR: TIME IS UNAVALAIBLE FOR BOOKING")
+                        return { "success": False }
+    
+            print("ERROR: VENUE DOESN'T HAVE ENOUGH CAPACITY")
+            return { "success": False }
 
             # Attempt to update the booking and commit the changes
             connection.execute(sqlalchemy.text("UPDATE bookings SET performer_id = :performer_id, venue_id = :venue_id, time_start = :time_start, time_end = :time_end WHERE id = :booking_id"),
