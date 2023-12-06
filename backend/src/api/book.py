@@ -51,27 +51,30 @@ def get_capacities(performer_id, venue_id):
 
     return capacity, capacity_preference, price
 
+def validate_times(time_start, time_end):
+    if (time_start == time_end):
+        print("ERROR: CANNOT CREATE A BOOKING WITH NO TIME BETWEEN START AND END")
+        return False
+    
+    if (time_start > time_end):
+        print("ERROR: CANNOT CREATE A BOOKING WITH START TIME AFTER END TIME")
+        return False
+    
+    time_s = time_start.replace(tzinfo=utc)
+    time_now = datetime.now().replace(tzinfo=utc)
+    if (time_s < time_now):
+        print("ERROR: CANNOT CREATE A BOOKING IN THE PAST")
+        return False
+    
+    return True
+
 # Helper function to check if the requested booking time works
 def check_availability(user_time_start, user_time_end, booking_time_start, booking_time_finish):
 
     if (user_time_start < booking_time_finish) and (user_time_end > booking_time_start):
         return False
     
-    if (user_time_start == user_time_end):
-        print("ERROR: CANNOT CREATE A BOOKING WITH NO TIME BETWEEN START AND END")
-        return False
-    
-    if (user_time_start > user_time_end):
-        print("ERROR: CANNOT CREATE A BOOKING WITH START TIME AFTER END TIME")
-        return False
-    
-    time_start = user_time_start.replace(tzinfo=utc)
-    time_now = datetime.now().replace(tzinfo=utc)
-    if (time_start < time_now):
-        print("ERROR: CANNOT CREATE A BOOKING IN THE PAST")
-        return False
-    
-    return True
+    return validate_times(user_time_start, user_time_end)
 
 # Endpoint for a performer to book a venue
 @router.post("/create/request_venue/{performer_id}")
@@ -111,7 +114,7 @@ def book_venue(performer_id: int, venue_booking: VenueBooking):
 
 # Endpoint for a venue to book a performer
 @router.post("/create/request_performer/{venue_id}")
-def book_venue(venue_id: int, performer_booking: PerformerBooking):
+def book_performer(venue_id: int, performer_booking: PerformerBooking):
 
     with db.engine.connect().execution_options(isolation_level="SERIALIZABLE") as connection:
         with connection.begin():
