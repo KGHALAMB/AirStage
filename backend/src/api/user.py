@@ -31,11 +31,11 @@ def signup(user: User):
 
     with db.engine.begin() as connection:
         
-        if len(user.username < 1):
+        if len(user.username) < 1:
             print("ERROR: CANNOT HAVE EMPTY USERNAME")
             return { "user_id": -1, "success": False }
         
-        if len(user.password < 1):
+        if len(user.password) < 1:
             print("ERROR: CANNOT HAVE EMPTY PASSWORD")
             return { "user_id": -1, "success": False }
         
