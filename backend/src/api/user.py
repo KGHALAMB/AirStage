@@ -68,6 +68,15 @@ def signup(user: User):
 def signin(user: User):
 
     with db.engine.begin() as connection:
+        
+        if len(user.username) < 1:
+            print("ERROR: CANNOT HAVE EMPTY USERNAME")
+            return { "user_id": -1, "success": False }
+        
+        if len(user.password) < 1:
+            print("ERROR: CANNOT HAVE EMPTY PASSWORD")
+            return { "user_id": -1, "success": False }
+        
         # Check if a user exists with the same username and password
         user_query = connection.execute(sqlalchemy.text("SELECT * FROM users WHERE username = :a AND password = :b"),
                                         {"a": user.username, "b": hash(user.password)})
